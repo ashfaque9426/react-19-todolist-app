@@ -1,7 +1,41 @@
-function AuthProvider() {
+import { useState, ReactNode, useEffect, createContext } from "react";
+import Cookies from 'js-cookie';
+
+export type User = {
+  userId: number,
+  userEmail: string,
+  userName: string
+}
+
+interface AuthContextType {
+  user: User | undefined,
+  setUser: (user: User) => void,
+  userLoading: boolean,
+  setUserLoading: (state: boolean) => void,
+  isUserAvailable: boolean,
+  setIsUserAvailable: (state: boolean) => void
+}
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | undefined>(undefined);
+  const [userLoading, setUserLoading] = useState(true);
+  const [isUserAvailable, setIsUserAvailable] = useState(false);
+
+  useEffect(() => {
+    const userSecret = Cookies.get('uscTDLT');
+    if (user && userSecret) {
+      setIsUserAvailable(true);
+    } else {
+      setIsUserAvailable(false);
+    }
+    setUserLoading(false);
+  }, [user]);
+
   return (
-    <div>AuthProvider</div>
+    <AuthContext value={{user, setUser, userLoading, setUserLoading, isUserAvailable, setIsUserAvailable}}>{children}</AuthContext>
   )
 }
 
-export default AuthProvider;
+export { AuthContext, AuthProvider };
