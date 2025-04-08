@@ -1,8 +1,11 @@
 import { createBrowserRouter } from "react-router";
-import App from "../App";
 import MainLayout from "../layouts/MainLayout";
 import Login from "../pages/Login";
 import ProtectedRoute from './ProtectedRoute';
+import Registration from "../pages/Registration";
+import HomePage from "../pages/HomePage";
+import EditSelectedTodo from "../pages/EditSelectedTodo";
+import About from "../pages/About";
 
 const router = createBrowserRouter([
   {
@@ -14,13 +17,25 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                Component: App
+                Component: HomePage
+            },
+            {
+              path: 'edit-todo/:id',
+              Component: EditSelectedTodo
             }
         ]
       },
       {
         path: 'login',
         Component: Login
+      },
+      {
+        path: 'register',
+        Component: Registration
+      },
+      {
+        path: 'about',
+        Component: About
       }
     ],
   },

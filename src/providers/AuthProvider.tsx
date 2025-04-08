@@ -13,7 +13,8 @@ interface AuthContextType {
   userLoading: boolean,
   setUserLoading: (state: boolean) => void,
   isUserAvailable: boolean,
-  setIsUserAvailable: (state: boolean) => void
+  setIsUserAvailable: (state: boolean) => void,
+  logout: () => Promise<void>,
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -22,6 +23,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
+
+  const logout = async () => {}
 
   useEffect(() => {
     const userSecret = Cookies.get('uscTDLT');
@@ -34,7 +37,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext value={{user, setUser, userLoading, setUserLoading, isUserAvailable, setIsUserAvailable}}>{children}</AuthContext>
+    <AuthContext value={{user, setUser, userLoading, setUserLoading, isUserAvailable, setIsUserAvailable, logout}}>{children}</AuthContext>
   )
 }
 

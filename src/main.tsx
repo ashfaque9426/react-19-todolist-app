@@ -7,12 +7,15 @@ import {
   RouterProvider
 } from "react-router"
 import router from './Routes/Routes.ts'
+import ErrorBoundary from './ErrorBoundary.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <ErrorBoundary>
+          <RouterProvider router={router} />
+        </ErrorBoundary>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
