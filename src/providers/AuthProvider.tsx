@@ -47,7 +47,14 @@ function AuthProvider({ children }: { children: ReactNode }) {
     console.log(userCredentials);
   }
 
-  const logout = async () => {}
+  const logout = async () => {
+    const userSecret = Cookies.get('uscTDLT');
+    if (userSecret) {
+      Cookies.remove('uscTDLT');
+      setUser(undefined);
+      setIsUserAvailable(false);
+    }
+  }
 
   useEffect(() => {
     const userSecret = Cookies.get('uscTDLT');
