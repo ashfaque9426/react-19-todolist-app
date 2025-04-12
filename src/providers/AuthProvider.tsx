@@ -1,10 +1,23 @@
 import { useState, ReactNode, useEffect, createContext } from "react";
 import Cookies from 'js-cookie';
 
-export type User = {
+type User = {
   userId: number,
   userEmail: string,
   userName: string
+}
+
+type LoginCredentials = {
+  userEmail: string,
+  userPassword: string
+}
+
+type RegisterCredentials = {
+  userEmail: string, 
+  userName: string,
+  userPassword: string,
+  userConfirmPassword: string,
+  recoveryStr: string
 }
 
 interface AuthContextType {
@@ -14,7 +27,9 @@ interface AuthContextType {
   setUserLoading: (state: boolean) => void,
   isUserAvailable: boolean,
   setIsUserAvailable: (state: boolean) => void,
+  login: (loginCredentials: LoginCredentials) => Promise<void>,
   logout: () => Promise<void>,
+  registerUser: (registerCredentials: RegisterCredentials) => Promise<void>,
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -23,6 +38,14 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
+
+  const login = async (userCredentials: LoginCredentials) => {
+    console.log(userCredentials)
+  }
+
+  const registerUser = async (userCredentials: RegisterCredentials) => {
+    console.log(userCredentials);
+  }
 
   const logout = async () => {}
 
@@ -37,7 +60,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext value={{user, setUser, userLoading, setUserLoading, isUserAvailable, setIsUserAvailable, logout}}>{children}</AuthContext>
+    <AuthContext value={{user, setUser, userLoading, setUserLoading, isUserAvailable, setIsUserAvailable, login, registerUser, logout}}>{children}</AuthContext>
   )
 }
 
