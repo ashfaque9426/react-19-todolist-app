@@ -15,23 +15,23 @@ const router = createBrowserRouter([
       {
         Component: ProtectedRoute,
         children: [
-            {
-                index: true,
-                Component: HomePage
-            },
-            {
-              path: 'edit-todo/:id',
-              Component: EditSelectedTodo
-            }
+          {
+            index: true,
+            Component: HomePage
+          },
+          {
+            path: 'edit-todo/:id',
+            Component: EditSelectedTodo
+          },
+          {
+            path: 'login',
+            Component: Login
+          },
+          {
+            path: 'register',
+            Component: Registration
+          },
         ]
-      },
-      {
-        path: 'login',
-        Component: Login
-      },
-      {
-        path: 'register',
-        Component: Registration
       },
       {
         path: 'about',

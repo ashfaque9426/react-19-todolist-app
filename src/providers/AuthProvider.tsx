@@ -1,6 +1,7 @@
 import { useState, ReactNode, useEffect, createContext } from "react";
 import Cookies from 'js-cookie';
 import { loginUrl, logoutUrl, registerUrl } from "../constants/constants";
+import { Navigate, useLocation, useNavigate } from "react-router";
 
 type User = {
   userId: number,
@@ -34,6 +35,7 @@ interface AuthContextType {
   userLoading: boolean,
   setUserLoading: (state: boolean) => void,
   isUserAvailable: boolean,
+  needToVerifyEmail: boolean,
   setIsUserAvailable: (state: boolean) => void,
   login: (loginCredentials: LoginCredentials) => Promise<void>,
   logout: (userEmail: string) => Promise<void>,
@@ -49,6 +51,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
+  const [needToVerifyEmail, setNeedToVerifyEmail] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from?.pathname || "/";
+
 
   const handleErr: ErrorHandler = (err) => {
     if (err instanceof Error) {
@@ -68,6 +75,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
           userName: servRes.userData.userName,
           userEmail: servRes.userData.userEmail
         });
+        navigate(from, { replace: true });
       }
   }
 
@@ -112,9 +120,14 @@ function AuthProvider({ children }: { children: ReactNode }) {
         body: stringifiedCrd
       })
 
-      const { userData, errMsg } = await serverRes.json();
+      const { succMsg, errMsg } = await serverRes.json();
 
-      handleServRes({userData, errMsg});
+      if (errMsg) {
+        console.error(errMsg);
+      } else if (succMsg) {
+        setNeedToVerifyEmail(true);
+        <Navigate to={"/login"} />
+      }
     } catch (err) {
       handleErr(err);
     }
@@ -163,7 +176,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, setIsUserAvailable, login, registerUser, logout }}>{children}</AuthContext>
+    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, setIsUserAvailable, login, registerUser, logout }}>{children}</AuthContext>
   )
 }
 

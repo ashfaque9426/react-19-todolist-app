@@ -8,30 +8,30 @@ function ProtectedRoute() {
     const auth = useAuth();
     const location = useLocation();
     const [shouldRedirect, setShouldRedirect] = useState(false);
-
-    const token = Cookies.get('uscTDLT');
-
-    let decoded;
-    let expired = false;
-    const currentTime = Math.floor(Date.now() / 1000);
+    const [expired, setExpired] = useState(false);
 
     useEffect(() => {
         const handleLogout = async () => {
-            if (auth && expired) {
-                Cookies.remove('uscTDLT');
-                await auth.logout();
+            if (auth && auth.user && expired) {
+                await auth.logout(auth.user.userEmail);
                 setShouldRedirect(true);
             }
         };
         handleLogout();
     }, [expired, auth]);
 
+    const token = Cookies.get('uscTDLT');
+
+    let decoded;
+
+    const currentTime = Math.floor(Date.now() / 1000);
+
     if (token) {
         decoded = decodeJwt(token);
     }
 
     if (decoded?.exp && decoded.exp < currentTime) {
-        expired = true;
+        setExpired(true);
     }
 
     if (shouldRedirect) {
