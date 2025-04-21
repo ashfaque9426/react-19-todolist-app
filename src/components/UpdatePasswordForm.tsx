@@ -3,12 +3,15 @@ import { useState } from "react";
 function UpdatePasswordForm({ token }: { token: string }) {
     // State variables to manage form visibility and messages
     const [showForm, setShowForm] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
     // This component handles the password update form submission
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setErrorMsg(null);
+        setSuccessMsg(null);
         const formData = new FormData(event.currentTarget);
         const password = formData.get('password');
         const confirmPassword = formData.get('confirmPassword');
@@ -18,8 +21,9 @@ function UpdatePasswordForm({ token }: { token: string }) {
             return;
         }
 
+        setLoading(true);
         try {
-            const response = await fetch('/api/update-password', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/update-password`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,13 +33,22 @@ function UpdatePasswordForm({ token }: { token: string }) {
 
             if (!response.ok) {
                 setErrorMsg("Failed to update password. Please try again.");
+                return;
             }
 
-            setSuccessMsg("Password updated successfully!");
-            setShowForm(false);
+            const data = await response.json();
+            if (data.errMsg) {
+                setErrorMsg(data.errMsg);
+            } else if (data.succMsg) {
+                setSuccessMsg(data.succMsg);
+                setShowForm(false);
+            }
+
         } catch (error) {
             console.error(error);
             setErrorMsg("Error updating password. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -72,8 +85,9 @@ function UpdatePasswordForm({ token }: { token: string }) {
                         <button
                             type="submit"
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            disabled={loading}
                         >
-                            Update Password
+                            {loading ? "Updating..." : "Update Password"}
                         </button>
                     </form>
                 ) : (
