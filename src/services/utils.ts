@@ -10,8 +10,8 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
     if (!(formData instanceof FormData)) {
         console.error("FormData is not an instance of FormData.");
         return {
-            succMsg: undefined,
-            errMsg: undefined,
+            succMsg: null,
+            errMsg: null,
         };
     }
 
@@ -19,24 +19,24 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
 
-    // Check if password and confirmPassword are not null or undefined
+    // Check if password and confirmPassword are not null or null
     if (!password || !confirmPassword) {
         return {
-            succMsg: undefined,
+            succMsg: null,
             errMsg: "Please fill in all fields!",
         };
     } else if (password.length < 8 || confirmPassword.length < 8) {
         alert("Password must be at least 8 characters long.");
         return {
-            succMsg: undefined,
-            errMsg: undefined,
+            succMsg: null,
+            errMsg: null,
         };
     }
 
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
         return {
-            succMsg: undefined,
+            succMsg: null,
             errMsg: "Password and Confirm Password do not match.",
         };
     }
@@ -48,7 +48,7 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
         // Check if token is available
         if (!token) {
             return {
-                succMsg: undefined,
+                succMsg: null,
                 errMsg: "Token is missing. Please try again.",
             };
         }
@@ -66,7 +66,7 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
         // Check if the response is ok (status in the range 200-299)
         if (!response.ok) {
             const errorMessage = await response.text();
-            return { succMsg: undefined, errMsg: errorMessage };
+            return { succMsg: null, errMsg: errorMessage };
         }
 
         // Parse the response data and return it

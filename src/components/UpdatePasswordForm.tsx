@@ -5,8 +5,8 @@ import { useNavigate } from "react-router";
 function UpdatePasswordForm() {
     // State variables to manage form visibility and messages
     const [data, action, isPending] = useActionState(updatePassword, {
-        succMsg: undefined,
-        errMsg: undefined,
+        succMsg: null,
+        errMsg: null,
     });
 
     const navigate = useNavigate();
@@ -58,7 +58,7 @@ function UpdatePasswordForm() {
                 (data.succMsg || data.errMsg) && (<div className="bg-white shadow-md rounded px-8 pt-6 pb-8 my-5">
                     <h2 className="text-2xl font-bold my-5">Password Update Status</h2>
                     {data?.succMsg && <p className="text-green-500">{data.succMsg}</p>}
-                    {data?.errMsg && <p className="text-red-500">{data.succMsg}</p>}
+                    {data?.errMsg && <p className="text-red-500">{data.errMsg}</p>}
                 </div>)
             }
         </form>
