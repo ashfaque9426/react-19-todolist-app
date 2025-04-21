@@ -1,7 +1,7 @@
 import { useState, ReactNode, useEffect, createContext } from "react";
 import Cookies from 'js-cookie';
 import { loginUrl, logoutUrl, registerUrl } from "../constants/constants";
-import { Navigate, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 type User = {
   userId: number,
@@ -26,7 +26,7 @@ type ServRes = {
   userData: {
     userId: number, userEmail: string, userName: string, userSecret: string
   },
-  errMsg: string
+  errMsg: string | undefined
 }
 
 interface AuthContextType {
@@ -126,7 +126,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
         console.error(errMsg);
       } else if (succMsg) {
         setNeedToVerifyEmail(true);
-        <Navigate to={"/login"} />
+        navigate("/login", { replace: true });
       }
     } catch (err) {
       handleErr(err);

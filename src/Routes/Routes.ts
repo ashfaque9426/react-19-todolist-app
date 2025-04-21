@@ -6,6 +6,7 @@ import Registration from "../pages/Registration";
 import HomePage from "../pages/HomePage";
 import EditSelectedTodo from "../pages/EditSelectedTodo";
 import About from "../pages/About";
+import UpdatePassword from "../pages/UpdatePassword";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
             path: 'register',
             Component: Registration
           },
+          {
+            path: 'update-password',
+            Component: UpdatePassword
+          }
         ]
       },
       {
