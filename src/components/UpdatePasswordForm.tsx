@@ -20,8 +20,8 @@ function UpdatePasswordForm() {
     },[data, navigate]);
 
     return (
-        <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 my-5" method="POST" action={action}>
-            <legend className="font-bold my-3">Please Update your password here.</legend>
+        <form className={`w-full md:w-2/3 xl:w-1/2 2xl:w-1/3 bg-white shadow-md rounded px-1 md:px-4 xl:px-8 pt-6 ${(data.succMsg || data.errMsg) ? "pb-0" : "pb-8"} mx-auto my-5`} action={action}>
+            <legend className="font-bold my-3">Update Password</legend>
             <div className="mb-4">
                 <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
                     New Password:
@@ -55,7 +55,7 @@ function UpdatePasswordForm() {
             </button>
 
             {
-                (data.succMsg || data.errMsg) && (<div className="bg-white shadow-md rounded px-8 pt-6 pb-8 my-5">
+                (data.succMsg || data.errMsg) && (<div className="my-5 h-8 text-center">
                     <h2 className="text-2xl font-bold my-5">Password Update Status</h2>
                     {data?.succMsg && <p className="text-green-500">{data.succMsg}</p>}
                     {data?.errMsg && <p className="text-red-500">{data.errMsg}</p>}
