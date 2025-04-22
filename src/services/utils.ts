@@ -26,10 +26,9 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
             errMsg: "Please fill in all fields!",
         };
     } else if (password.length < 8 || confirmPassword.length < 8) {
-        alert("Password must be at least 8 characters long.");
         return {
             succMsg: null,
-            errMsg: null,
+            errMsg: "Password must be at least 8 characters long.",
         };
     }
 
