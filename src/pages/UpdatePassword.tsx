@@ -10,10 +10,18 @@ function UpdatePassword() {
     const token = searchParams.get("token");
 
     useEffect(() => {
-        if (token) {
+        setLoading(true);
+
+        const tokenAvailable = Cookies.get('upPassSec');
+        if ((token && !tokenAvailable) || (token && tokenAvailable !== token)) {
             Cookies.set('upPassSec', token, { expires: 15 / (24 * 60) });
             setTokenAvailable(true);
+        } else if (tokenAvailable && (tokenAvailable === token)) {
+            setTokenAvailable(true);
+        } else {
+            setTokenAvailable(false);
         }
+
         setLoading(false);
     }, [token]);
 
