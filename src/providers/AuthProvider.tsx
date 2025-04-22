@@ -48,15 +48,21 @@ interface ErrorHandler {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 function AuthProvider({ children }: { children: ReactNode }) {
+  // State variables to manage user authentication
+  // and user data
   const [user, setUser] = useState<User | undefined>(undefined);
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
   const [needToVerifyEmail, setNeedToVerifyEmail] = useState(false);
+
+  // To grab the location object from react-router
+  // and to navigate to different routes
   const location = useLocation();
   const navigate = useNavigate();
   const from = location.state?.from?.pathname || "/";
 
 
+  // error handler function to handle errors
   const handleErr: ErrorHandler = (err) => {
     if (err instanceof Error) {
         console.error(err.message);
@@ -65,6 +71,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       }
   }
 
+  // server response handler function to handle server responses
   const handleServRes = (servRes: ServRes) => {
     if (servRes.errMsg) {
         console.error(servRes.errMsg);
@@ -79,6 +86,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
       }
   }
 
+  // login function to login user
+  // and to set the user data in the state
   const login = async (userCredentials: LoginCredentials) => {
     if (!userCredentials) {
       console.log("User Credentials not provided as function parameter object.");
@@ -103,6 +112,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // register function to register user
+  // and to set the user email verification data in the state
   const registerUser = async (userCredentials: RegisterCredentials) => {
     if (!userCredentials) {
       console.log("User Credentials not provided as function parameter object.");
@@ -133,6 +144,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // logout function to logout user
+  // and to remove the user data from the state
   const logout = async (userEmail: string) => {
     const userSecret: string | undefined = Cookies.get('uscTDLT');
     if (!userEmail || !userSecret) {
@@ -165,7 +178,10 @@ function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // Check if the user is logged in or not
+  // and set the user data in the state accordingly
   useEffect(() => {
+    setUserLoading(true);
     const userSecret = Cookies.get('uscTDLT');
     if (user && userSecret) {
       setIsUserAvailable(true);

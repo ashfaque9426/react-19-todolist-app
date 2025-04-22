@@ -3,6 +3,7 @@ import { Navigate, Outlet, useLocation } from 'react-router';
 import { decodeJwt } from "jose";
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
+import LoadingData from '../components/LoadingData';
 
 function ProtectedRoute() {
     // bring the auth context from useAuth hook
@@ -47,7 +48,7 @@ function ProtectedRoute() {
     }, [token, currentTime]);
 
     // Check if the auth is still loading and if so retrun the loading jsx element
-    if (auth && auth.userLoading) return <div className='absolute top-0 right-0 left-0 bottom-0 bg-black opacity-35 z-50 flex justify-center items-center text-4xl text-yellow-500'>Loading....</div>
+    if (auth && auth.userLoading) return <LoadingData />;
 
     // Check if the user is logged out and if so redirect to login page
     if (shouldRedirect) {

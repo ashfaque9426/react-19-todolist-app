@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router";
 import UpdatePasswordForm from "../components/UpdatePasswordForm";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import LoadingData from "../components/LoadingData";
 
 function UpdatePassword() {
     const [tokenAvailable, setTokenAvailable] = useState(false);
@@ -12,8 +13,16 @@ function UpdatePassword() {
     useEffect(() => {
         setLoading(true);
 
+        const jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
+
+        if(!token || !jwtRegex.test(token as string)) {
+            setTokenAvailable(false);
+            setLoading(false);
+            return;
+        }
+
         const tokenAvailable = Cookies.get('upPassSec');
-        if ((token && !tokenAvailable) || (token && tokenAvailable !== token)) {
+        if (!tokenAvailable || (tokenAvailable !== token)) {
             Cookies.set('upPassSec', token, { expires: 15 / (24 * 60) });
             setTokenAvailable(true);
         } else if (tokenAvailable && (tokenAvailable === token)) {
@@ -36,9 +45,9 @@ function UpdatePassword() {
                     <UpdatePasswordForm />
                 </div>) : (<div className="w-full h-full flex flex-col justify-center items-center gap-5">
                     {
-                        loading ? <div className='absolute top-0 right-0 left-0 bottom-0 bg-black opacity-35 z-50 flex justify-center items-center text-4xl text-yellow-500'>Loading....</div> : <>
+                        loading ? <LoadingData /> : <>
                             <h2 className="font-bold text-2xl">Token is missing.</h2>
-                            <p className="text-yellow-500 text-xl font-semibold">Token is required to update user password. Unauthorized Access.</p>
+                            <p className="text-yellow-500 text-xl font-semibold">JWT Token is required from the server to update user password. Unauthorized Access.</p>
                         </>
                     }
                     
