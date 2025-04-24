@@ -185,11 +185,14 @@ function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [handleErr, navigate]);
 
+  // refresh token function to refresh the access token and store it in the cookies
+  // success only true when the cookie is set successfully because on logout user needs to login again to get new refresh token
   const refreshTokenHandler = useCallback(async () => {
     const { accessToken, errMsg, status } = await refreshAccessToken();
     let success = false;
 
     if (user?.userEmail && status === 401 && errMsg === "Invalid Refresh Token.") {
+      // logout the user if the refresh token is invalid
       await logout(user?.userEmail);
     } else if (errMsg) {
       console.error(errMsg);
@@ -214,10 +217,18 @@ function AuthProvider({ children }: { children: ReactNode }) {
       if (timeUntilExpiry > 60) {
         refreshTimeout = setTimeout(() => {
           // looping the schedule by recursive calls after each time the refreshTokenHandler gets called before 1 minute of token expiry to avoid token expiry
-          refreshTokenHandler().then(schedule);
+          refreshTokenHandler().then(success => {
+            if (success) {
+              schedule();
+            }
+          });
         }, (timeUntilExpiry - 60) * 1000);
       } else {
-        refreshTokenHandler().then(schedule);
+        refreshTokenHandler().then(success => {
+          if (success) {
+            schedule();
+          }
+        });
       }
     };
 
