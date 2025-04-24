@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 
+// for updating the password
 export const updatePassword = async (previousState: unknown, formData: FormData) => {
     // Extracting form data
     if (previousState) {
@@ -72,6 +73,29 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
         const data = await response.json();
         return data;
 
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+// for refresing the access token
+export const refreshAccessToken = async () => {
+    try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/refresh-token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            // This is where you handle HTTP error responses like 401, 400, etc.
+            return { status: res.status, errMsg: data.errMsg };
+        }
+        
+        return data;
     } catch (error) {
         console.error(error);
     }
