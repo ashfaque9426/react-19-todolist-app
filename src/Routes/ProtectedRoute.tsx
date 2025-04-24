@@ -8,8 +8,7 @@ function ProtectedRoute() {
     // get the location object from react-router
     const location = useLocation();
 
-    // Check if the token is not available and if so redirect to login page
-    // and if the user is trying to access the login, register or update password page
+    // Check if the auth.user object is undefined,that means user login credentials are missing and if so redirect to login page only if user is not trying to access the login, register or update password page
     if (!auth || !auth.user) {
         if (location.pathname.startsWith("/login") || location.pathname.startsWith("/register") || location.pathname.startsWith("/update-password")) {
             return <Outlet />;
@@ -25,8 +24,7 @@ function ProtectedRoute() {
         return <Navigate to={"/"} />
     }
 
-    // If the user is logged in and the token is available, return the outlet component
-    // which will render the child components of the protected route
+    // if the bellow code is about to execute that means the user is logged in and the token is available so return the Outlet component which will render the child components of the route
     return <Outlet />;
 }
 
