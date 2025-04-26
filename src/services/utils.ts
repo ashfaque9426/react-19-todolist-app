@@ -1,5 +1,23 @@
 import Cookies from "js-cookie";
 
+// helper function to haddle success and error messages from the server
+const handleSuccMsgErrMsgRes = async (res: Response, reqFromStr: string) => {
+    let data;
+    try {
+        data = await res.json();
+
+        if (!res.ok) {
+            // This is where you handle HTTP error responses like 401, 400, etc.
+            return { status: res.status, succMsg: null, errMsg: data.errMsg };
+        }
+
+        return { status: res.status, ...data };
+    } catch (jsonErr) {
+        console.error("Failed to parse JSON", jsonErr);
+        return { status: res.status, succMsg: null, errMsg: `Invalid server response ${reqFromStr}` };
+    }
+}
+
 // for updating the password
 export const updatePassword = async (previousState: unknown, formData: FormData) => {
     // Extracting form data
@@ -63,15 +81,7 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
             body: JSON.stringify({ token: token, newPassword: password, }),
         });
 
-        // Check if the response is ok (status in the range 200-299)
-        if (!response.ok) {
-            const errorMessage = await response.text();
-            return { succMsg: null, errMsg: errorMessage };
-        }
-
-        // Parse the response data and return it
-        const data = await response.json();
-        return data;
+        return handleSuccMsgErrMsgRes(response, "Update Password Request");
 
     } catch (error) {
         console.error(error);
@@ -94,9 +104,31 @@ export const refreshAccessToken = async () => {
             // This is where you handle HTTP error responses like 401, 400, etc.
             return { status: res.status, errMsg: data.errMsg };
         }
-        
-        return data;
+
+        return { ...data, status: res.status };
     } catch (error) {
         console.error(error);
     }
 };
+
+// forgot password function to send the email from the server
+export const forgotPassword = async (userEmail: string) => {
+    if (!userEmail) {
+        console.error("User email is required to send the forgot password request.");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/forgot-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userEmail })
+        });
+
+        return handleSuccMsgErrMsgRes(res, "Forgot Password Request");
+    } catch (error) {
+        console.error(error);
+    }
+}

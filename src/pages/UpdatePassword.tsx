@@ -39,7 +39,7 @@ function UpdatePassword() {
             {
                 tokenAvailable ? (<div className="w-full h-full px-1 md:px-0">
                     <h2 className="text-2xl font-bold my-5 text-center">Please Update Your Password Here.</h2>
-                    <p className="font-semibold text-xl text-center">Your token is valid for 5 minutes from now. Token: {token}</p>
+                    <p className="font-semibold text-xl text-center">Your password request is valid for 5 minutes from now.</p>
 
                     {/* Update password form */}
                     <UpdatePasswordForm />

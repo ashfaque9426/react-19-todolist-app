@@ -4,52 +4,8 @@ import { loginUrl, logoutUrl, registerUrl } from "../constants/constants";
 import { useLocation, useNavigate } from "react-router";
 import { decodeJwt } from "jose"
 import { refreshAccessToken } from "../services/utils";
-
-type User = {
-  userId: number,
-  userEmail: string,
-  userName: string
-}
-
-type LoginCredentials = {
-  userEmail: string,
-  userPassword: string
-}
-
-type RegisterCredentials = {
-  userEmail: string,
-  userName: string,
-  userPassword: string,
-  userConfirmPassword: string,
-  recoveryStr: string
-}
-
-type ServRes = {
-  userData: {
-    userId: number, userEmail: string, userName: string, accessToken: string
-  },
-  errMsg: string | undefined
-}
-
-type ScheduleTokenRefreshLoop = () => (() => void) | void;
-
-interface AuthContextType {
-  user: User | undefined,
-  setUser: (user: User) => void,
-  userLoading: boolean,
-  setUserLoading: (state: boolean) => void,
-  isUserAvailable: boolean,
-  needToVerifyEmail: boolean,
-  setIsUserAvailable: (state: boolean) => void,
-  login: (loginCredentials: LoginCredentials) => Promise<void>,
-  logout: (userEmail: string) => Promise<void>,
-  registerUser: (registerCredentials: RegisterCredentials) => Promise<void>,
-  refreshTokenHandler: () => Promise<boolean>,
-  scheduleTokenRefreshLoop: ScheduleTokenRefreshLoop
-}
-interface ErrorHandler {
-  (err: unknown): void;
-}
+import { LoginCredentials, RegisterCredentials, ServResUserLoginData, User } from "../services/dataTypes";
+import { AuthContextType, ErrorHandler } from "../services/interfaces";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -77,7 +33,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // server response handler function to handle server responses
-  const handleServRes = (servRes: ServRes) => {
+  const handleServRes = (servRes: ServResUserLoginData) => {
     if (servRes.errMsg) {
       console.error(servRes.errMsg);
     } else if (servRes.userData) {
