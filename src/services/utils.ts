@@ -8,13 +8,13 @@ const handleSuccMsgErrMsgRes = async (res: Response, reqFromStr: string) => {
 
         if (!res.ok) {
             // This is where you handle HTTP error responses like 401, 400, etc.
-            return { status: res.status, succMsg: null, errMsg: data.errMsg };
+            return { status: res.status, errMsg: data.errMsg };
         }
 
         return { status: res.status, ...data };
     } catch (jsonErr) {
         console.error("Failed to parse JSON", jsonErr);
-        return { status: res.status, succMsg: null, errMsg: `Invalid server response ${reqFromStr}` };
+        return { status: res.status, errMsg: `Invalid server response ${reqFromStr}.` };
     }
 }
 
@@ -81,7 +81,7 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
             body: JSON.stringify({ token: token, newPassword: password, }),
         });
 
-        return handleSuccMsgErrMsgRes(response, "Update Password Request");
+        return await handleSuccMsgErrMsgRes(response, "Update Password Request");
 
     } catch (error) {
         console.error(error);
@@ -91,21 +91,14 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
 // for refresing the access token
 export const refreshAccessToken = async () => {
     try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/refresh-token`, {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/refresh-access-token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
         });
 
-        const data = await res.json();
-
-        if (!res.ok) {
-            // This is where you handle HTTP error responses like 401, 400, etc.
-            return { status: res.status, errMsg: data.errMsg };
-        }
-
-        return { ...data, status: res.status };
+        return await handleSuccMsgErrMsgRes(res, "Refresh Access Token Request");
     } catch (error) {
         console.error(error);
     }
@@ -127,7 +120,61 @@ export const forgotPassword = async (userEmail: string) => {
             body: JSON.stringify({ userEmail })
         });
 
-        return handleSuccMsgErrMsgRes(res, "Forgot Password Request");
+        return await handleSuccMsgErrMsgRes(res, "Forgot Password Request");
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// for getting the todo record by id
+export const getTodoRecordById = async (todoId: string) => {
+    const userSecret = Cookies.get('uscTDLT');
+    if (!userSecret || !todoId) {
+        return { errMsg: `${!userSecret ? "User must be logged in to get the todo record." : "Todo Id parameter value is required to get todo record from database."}` };
+    }
+
+    try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/get-todo-record?recordId=${todoId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userSecret}`
+            }
+        });
+
+        return await handleSuccMsgErrMsgRes(res, "Get Todo Record Request");
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// get todo records for specific user
+export const getTodoRecords = async (userId: number, date: string | undefined, title: string | undefined) => {
+    const userSecret = Cookies.get('uscTDLT');
+    if (!userSecret) {
+        return { errMsg: "User must be logged in to get the todo record." };
+    }
+
+    let url = `${process.env.REACT_APP_API_URL}/api/get-todo-records?userId=${userId}`;
+
+    if (date) {
+        url += `&date=${date}`;
+    }
+
+    if (title) {
+        url += `&title=${title}`;
+    }
+
+    try {
+        const res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userSecret}`
+            }
+        });
+
+        return await handleSuccMsgErrMsgRes(res, "Get Todo Records Requests for User");
     } catch (error) {
         console.error(error);
     }
