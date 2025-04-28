@@ -1,6 +1,6 @@
-import { Outlet, useLocation, useNavigate } from "react-router"
-import Footer from "../components/Footer"
-import NavigationBar from "../components/NavigationBar"
+import { Outlet, useLocation, useNavigate } from "react-router";
+import Footer from "../components/Footer";
+import NavigationBar from "../components/NavigationBar";
 import useAuth from "../hooks/useAuth";
 import { useEffect } from "react";
 

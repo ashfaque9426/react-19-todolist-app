@@ -7,6 +7,7 @@ import {
 } from "react-router"
 import router from './Routes/Routes.ts'
 import ErrorBoundary from './ErrorBoundary.tsx'
+import { ToastContainer } from 'react-toastify';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -14,6 +15,18 @@ createRoot(document.getElementById('root')!).render(
       <Suspense fallback={<div>Loading...</div>}>
         <AuthProvider>
           <RouterProvider router={router} />
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
         </AuthProvider>
       </Suspense>
     </ErrorBoundary>

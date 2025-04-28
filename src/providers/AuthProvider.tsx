@@ -2,7 +2,7 @@ import { useState, ReactNode, useEffect, createContext, useCallback } from "reac
 import Cookies from 'js-cookie';
 import { loginUrl, logoutUrl, registerUrl } from "../constants/constants";
 import { decodeJwt } from "jose"
-import { refreshAccessToken } from "../services/utils";
+import { refreshAccessToken, showToast } from "../services/utils";
 import { LoginCredentials, RegisterCredentials, ServResUserLoginData, User } from "../services/dataTypes";
 import { AuthContextType, ErrorHandler } from "../services/interfaces";
 
@@ -28,7 +28,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   // server response handler function to handle server responses
   const handleServRes = (servRes: ServResUserLoginData) => {
     if (servRes.errMsg) {
-      console.error(servRes.errMsg);
+      showToast(servRes.errMsg, "error");
     } else if (servRes.userData) {
       Cookies.set('uscTDLT', servRes.userData.accessToken);
       setUser({
@@ -91,7 +91,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       const { succMsg, errMsg } = await serverRes.json();
 
       if (errMsg) {
-        console.error(errMsg);
+        showToast(errMsg, "error");
       } else if (succMsg) {
         setNeedToVerifyEmail(true);
       }
@@ -124,7 +124,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       const { succMsg, errMsg } = await serverRes.json();
 
       if (errMsg) {
-        console.error(errMsg)
+        showToast(errMsg, "error");
       }
       else if (succMsg) {
         console.log(succMsg);
@@ -160,6 +160,12 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
     const schedule = () => {
       const token = Cookies.get('uscTDLT');
+
+      if(!token) {
+        console.error("User is not logged in to schedule token refresh loop.");
+        return;
+      }
+
       const decoded = token ? decodeJwt(token) : undefined;
       const tokenExp = decoded?.exp ?? 0;
       const currentTime = Math.floor(Date.now() / 1000);
@@ -196,13 +202,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
   // Schedule the token refresh loop when the component mounts
   // and clean up the interval when the component unmounts
   useEffect(() => {
-    if (!user) {
+    if (!isUserAvailable) {
       return;
     }
 
     const cleanup = scheduleTokenRefreshLoop();
     return cleanup;
-  }, [user, scheduleTokenRefreshLoop]);
+  }, [isUserAvailable, scheduleTokenRefreshLoop]);
 
 
   // Check if the user is logged in or not

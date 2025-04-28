@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { toast } from 'react-toastify';
 
 // helper function to haddle success and error messages from the server
 const handleSuccMsgErrMsgRes = async (res: Response, reqFromStr: string) => {
@@ -178,4 +179,27 @@ export const getTodoRecords = async (userId: number, date: string | undefined, t
     } catch (error) {
         console.error(error);
     }
+}
+
+// react-tostify function to show the toast message
+export const showToast = (message: string, type: "success" | "error" | "info" | "warning") => {
+    if (!message) {
+        console.error("Message is required to show the toast message.");
+        return;
+    }
+    if (!["success", "error", "info", "warning"].includes(type)) {
+        console.error("Type is required to show the toast message.");
+        return;
+    }
+    // Check if the toast library is available
+    return toast[type](message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
 }
