@@ -15,6 +15,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
   const [needToVerifyEmail, setNeedToVerifyEmail] = useState(false);
+  const [timeOutIdArr, setTimeOutIdArr] = useState<NodeJS.Timeout[]>([]);
 
   // error handler function to handle errors
   const handleErr: ErrorHandler = useCallback((err) => {
@@ -48,7 +49,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       console.error("User Credentials not provided as function parameter object.");
       return;
     }
-    
+
     try {
       const stringifiedCrd = JSON.stringify(userCredentials);
 
@@ -127,18 +128,31 @@ function AuthProvider({ children }: { children: ReactNode }) {
         showToast(errMsg, "error");
       }
       else if (succMsg) {
-        console.log(succMsg);
+        showToast(succMsg, "success");
+        // remove the cookie and set the user to undefined
         Cookies.remove('uscTDLT');
+
+        // set the user to undefined
         setUser(undefined);
+
+        // reseting the refresh access token timeout loops by clearing the timeouts if available
+        // and setting the timeout id array to empty array
+        timeOutIdArr.forEach(clearTimeout);
+        setTimeOutIdArr([]);
       }
     } catch (err) {
       handleErr(err);
     }
-  }, [handleErr]);
+  }, [handleErr, timeOutIdArr]);
 
   // refresh token function to refresh the access token and store it in the cookies
   // success only true when the cookie is set successfully because on logout user needs to login again to get new refresh token
   const refreshTokenHandler = useCallback(async () => {
+    if (!user) {
+      console.error("User is not logged in to refresh the access token.");
+      return false;
+    }
+
     const { accessToken, errMsg, status } = await refreshAccessToken();
     let success = false;
 
@@ -161,7 +175,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     const schedule = () => {
       const token = Cookies.get('uscTDLT');
 
-      if(!token) {
+      if (!token) {
         console.error("User is not logged in to schedule token refresh loop.");
         return;
       }
@@ -180,6 +194,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
             }
           });
         }, (timeUntilExpiry - 60) * 1000);
+        setTimeOutIdArr(prev => [...prev, refreshTimeout]);
       } else {
         refreshTokenHandler().then(success => {
           if (success) {
@@ -192,7 +207,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     schedule();
 
     return () => {
-      if (refreshTimeout) {
+      if (refreshTimeout !== undefined) {
         clearTimeout(refreshTimeout);
       }
     };
