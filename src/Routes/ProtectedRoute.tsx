@@ -11,11 +11,13 @@ function ProtectedRoute() {
     const navigate = useNavigate();
 
     useEffect(() => {
-    if (auth?.isUserAvailable && location.state?.from) {
-      // After using the 'from' value, clear the state
-      navigate(location.state.from.pathname, { replace: true, state: null });
-    }
-  }, [auth, location, navigate]);
+        if (auth?.isUserAvailable && location.state?.from) {
+            // After using the 'from' value, clear the state
+            navigate(location.state.from.pathname, { replace: true, state: null });
+        } else if (auth?.isUserAvailable) {
+            navigate('/', { replace: true });
+        }
+    }, [auth, location, navigate]);
 
     // Check if the auth.user object is undefined,that means user login credentials are missing and if so redirect to login page only if user is not trying to access the login, register or update password page
     if (!auth || !auth.isUserAvailable) {
