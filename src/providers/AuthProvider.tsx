@@ -1,7 +1,6 @@
 import { useState, ReactNode, useEffect, createContext, useCallback } from "react";
 import Cookies from 'js-cookie';
 import { loginUrl, logoutUrl, registerUrl } from "../constants/constants";
-import { useLocation, useNavigate } from "react-router";
 import { decodeJwt } from "jose"
 import { refreshAccessToken } from "../services/utils";
 import { LoginCredentials, RegisterCredentials, ServResUserLoginData, User } from "../services/dataTypes";
@@ -16,12 +15,6 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
   const [needToVerifyEmail, setNeedToVerifyEmail] = useState(false);
-
-  // To grab the location object from react-router
-  // and to navigate to different routes
-  const location = useLocation();
-  const navigate = useNavigate();
-  const from = location.state?.from?.pathname || "/";
 
   // error handler function to handle errors
   const handleErr: ErrorHandler = useCallback((err) => {
@@ -43,17 +36,19 @@ function AuthProvider({ children }: { children: ReactNode }) {
         userName: servRes.userData.userName,
         userEmail: servRes.userData.userEmail
       });
-      navigate(from, { replace: true });
     }
   }
 
   // login function to login user
   // and to set the user data in the state
   const login = async (userCredentials: LoginCredentials) => {
+    // check if the user credentials are provided or not
+    // if not then return from the function
     if (!userCredentials) {
-      console.log("User Credentials not provided as function parameter object.");
+      console.error("User Credentials not provided as function parameter object.");
       return;
     }
+    
     try {
       const stringifiedCrd = JSON.stringify(userCredentials);
 
@@ -77,11 +72,12 @@ function AuthProvider({ children }: { children: ReactNode }) {
   // and to set the user email verification data in the state
   const registerUser = async (userCredentials: RegisterCredentials) => {
     if (!userCredentials) {
-      console.log("User Credentials not provided as function parameter object.");
+      console.error("User Credentials not provided as function parameter object.");
       return;
     }
 
     try {
+      setUserLoading(true);
       const stringifiedCrd = JSON.stringify(userCredentials);
 
       const serverRes = await fetch(`${registerUrl}`, {
@@ -98,10 +94,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
         console.error(errMsg);
       } else if (succMsg) {
         setNeedToVerifyEmail(true);
-        navigate("/login", { replace: true });
       }
     } catch (err) {
       handleErr(err);
+    } finally {
+      setUserLoading(false);
     }
   }
 
@@ -133,13 +130,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
         console.log(succMsg);
         Cookies.remove('uscTDLT');
         setUser(undefined);
-        setIsUserAvailable(false);
-        navigate("/login", { replace: true });
       }
     } catch (err) {
       handleErr(err);
     }
-  }, [handleErr, navigate]);
+  }, [handleErr]);
 
   // refresh token function to refresh the access token and store it in the cookies
   // success only true when the cookie is set successfully because on logout user needs to login again to get new refresh token
@@ -198,11 +193,16 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, [refreshTokenHandler]);
 
 
-
+  // Schedule the token refresh loop when the component mounts
+  // and clean up the interval when the component unmounts
   useEffect(() => {
+    if (!user) {
+      return;
+    }
+
     const cleanup = scheduleTokenRefreshLoop();
     return cleanup;
-  }, [scheduleTokenRefreshLoop]);
+  }, [user, scheduleTokenRefreshLoop]);
 
 
   // Check if the user is logged in or not

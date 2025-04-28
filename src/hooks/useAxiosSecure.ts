@@ -5,7 +5,7 @@ import useAuth from "./useAuth";
 import Cookies from 'js-cookie';
 
 const axiosSecure = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    baseURL: import.meta.env.REACT_APP_API_URL,
 });
 
 const useAxiosSecure = () => {

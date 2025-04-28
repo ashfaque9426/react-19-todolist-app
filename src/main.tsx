@@ -1,6 +1,5 @@
 import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router'
 import './styles/index.css'
 import { AuthProvider } from './providers/AuthProvider.tsx'
 import {
@@ -11,14 +10,12 @@ import ErrorBoundary from './ErrorBoundary.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <ErrorBoundary>
-          <Suspense fallback={<div>Loading...</div>}>
-            <RouterProvider router={router} />
-          </Suspense>
-        </ErrorBoundary>
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary fallback={"Something went wrong about auth context"}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </Suspense>
+    </ErrorBoundary>
   </StrictMode>,
 )

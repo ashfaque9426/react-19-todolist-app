@@ -2,6 +2,7 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface State {
@@ -29,7 +30,7 @@ class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div style={{ padding: '20px', color: 'red' }}>
-          <h2>Something went wrong.</h2>
+          <h2>{this.props.fallback || "Something went wrong."}</h2>
           <details style={{ whiteSpace: 'pre-wrap' }}>
             {this.state.error?.toString()}
             <br />

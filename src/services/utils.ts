@@ -73,7 +73,7 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
 
         // Send the password update request to the server
 
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/update-password`, {
+        const response = await fetch(`${import.meta.env.REACT_APP_API_URL}/api/update-password`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
 // for refresing the access token
 export const refreshAccessToken = async () => {
     try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/refresh-access-token`, {
+        const res = await fetch(`${import.meta.env.REACT_APP_API_URL}/api/refresh-access-token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -112,7 +112,7 @@ export const forgotPassword = async (userEmail: string) => {
     }
 
     try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/forgot-password`, {
+        const res = await fetch(`${import.meta.env.REACT_APP_API_URL}/api/forgot-password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -134,7 +134,7 @@ export const getTodoRecordById = async (todoId: string) => {
     }
 
     try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/get-todo-record?recordId=${todoId}`, {
+        const res = await fetch(`${import.meta.env.REACT_APP_API_URL}/api/get-todo-record?recordId=${todoId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -155,7 +155,7 @@ export const getTodoRecords = async (userId: number, date: string | undefined, t
         return { errMsg: "User must be logged in to get the todo record." };
     }
 
-    let url = `${process.env.REACT_APP_API_URL}/api/get-todo-records?userId=${userId}`;
+    let url = `${import.meta.env.REACT_APP_API_URL}/api/get-todo-records?userId=${userId}`;
 
     if (date) {
         url += `&date=${date}`;
