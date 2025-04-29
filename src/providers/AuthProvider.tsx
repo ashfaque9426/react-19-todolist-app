@@ -42,7 +42,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
   // login function to login user
   // and to set the user data in the state
-  const login = async (userCredentials: LoginCredentials) => {
+  const login = useCallback(async (userCredentials: LoginCredentials) => {
     // check if the user credentials are provided or not
     // if not then return from the function
     if (!userCredentials) {
@@ -67,11 +67,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       handleErr(err);
     }
-  }
+  }, [handleErr]);
 
   // register function to register user
   // and to set the user email verification data in the state
-  const registerUser = async (userCredentials: RegisterCredentials) => {
+  const registerUser = useCallback(async (userCredentials: RegisterCredentials) => {
     if (!userCredentials) {
       console.error("User Credentials not provided as function parameter object.");
       return;
@@ -101,7 +101,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setUserLoading(false);
     }
-  }
+  }, [handleErr]);
 
   // logout function to logout user
   // and to remove the user data from the state
