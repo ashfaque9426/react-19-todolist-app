@@ -71,18 +71,29 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
   // register function to register user
   // and to set the user email verification data in the state
-  const registerUser = useCallback(async (userCredentials: RegisterCredentials) => {
-    if (!userCredentials) {
+  const registerUser = useCallback(async (registerCredentials: RegisterCredentials) => {
+    if (!registerCredentials) {
       console.error("User Credentials not provided as function parameter object.");
       return;
     }
 
+    if (registerCredentials.userPassword !== registerCredentials.userConfirmPassword) {
+      showToast("User passwords do not match", "warning");
+      return;
+    }
+
+    const userPayload = {
+      userName: registerCredentials.userName as string,
+      userEmail: registerCredentials.userEmail as string,
+      userPassword: registerCredentials.userPassword as string
+    }
+
+    setUserLoading(true);
     try {
-      setUserLoading(true);
-      const stringifiedCrd = JSON.stringify(userCredentials);
+      const stringifiedCrd = JSON.stringify(userPayload);
 
       const serverRes = await fetch(`${registerUrl}`, {
-        method: 'PATCH',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -94,13 +105,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
       if (errMsg) {
         showToast(errMsg, "error");
       } else if (succMsg) {
+        showToast(succMsg, "success");
         setNeedToVerifyEmail(true);
       }
     } catch (err) {
       handleErr(err);
-    } finally {
-      setUserLoading(false);
     }
+    setUserLoading(false);
   }, [handleErr]);
 
   // logout function to logout user

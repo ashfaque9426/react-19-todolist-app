@@ -16,8 +16,7 @@ export type RegisterCredentials = {
   userEmail: string,
   userName: string,
   userPassword: string,
-  userConfirmPassword: string,
-  recoveryStr: string
+  userConfirmPassword: string
 }
 
 // Server response user login data type which should get returned from the server
