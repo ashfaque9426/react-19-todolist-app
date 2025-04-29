@@ -29,13 +29,15 @@ class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '20px', color: 'red' }}>
-          <h2>{this.props.fallback || "Something went wrong."}</h2>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {this.state.error?.toString()}
-            <br />
-            {this.state.errorInfo?.componentStack}
-          </details>
+        <div className='w-full h-screen flex justify-center items-center text-red-500'>
+          <div className='w-full h-full md:w-3/4 md:h-1/2 xl:w-1/2 xl:h-1/2 2xl:w-1/3 md:border p-3 rounded-lg'>
+            <h2 className='font-bold text-lg mb-3'>{this.props.fallback || "Something went wrong."}</h2>
+            <details className='font-semibold break-all'>
+              <span>{this.state.error?.toString()}</span>
+              <br />
+              <span>{this.state.errorInfo?.componentStack}</span>
+            </details>
+          </div>
         </div>
       );
     }

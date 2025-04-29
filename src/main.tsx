@@ -7,12 +7,13 @@ import {
 } from "react-router"
 import router from './Routes/Routes.ts'
 import ErrorBoundary from './ErrorBoundary.tsx'
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify'
+import LoadingData from './components/LoadingData.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ErrorBoundary fallback={"Something went wrong about auth context"}>
-      <Suspense fallback={<div>Loading...</div>}>
+    <ErrorBoundary fallback={"Unexpected Error Occured"}>
+      <Suspense fallback={<LoadingData />}>
         <AuthProvider>
           <RouterProvider router={router} />
           <ToastContainer
