@@ -21,7 +21,7 @@ function ProtectedRoute() {
 
     // Check if the token is available and and if the user is trying to access the login, register or update password page and if so redirect to home page
     if (auth.isUserAvailable && (location.pathname.startsWith("/login") || location.pathname.startsWith("/register") || location.pathname.startsWith("/update-password"))) {
-        return <Navigate to={"/"} />
+        return <Navigate to={"/"} replace />
     }
 
     // if the bellow code is about to execute that means the user is logged in and the token is available so return the Outlet component which will render the child components of the route
