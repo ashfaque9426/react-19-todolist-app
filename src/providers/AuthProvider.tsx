@@ -72,14 +72,15 @@ function AuthProvider({ children }: { children: ReactNode }) {
   // register function to register user
   // and to set the user email verification data in the state
   const registerUser = useCallback(async (registerCredentials: RegisterCredentials) => {
+    let registerSucceeded = false;
     if (!registerCredentials) {
       console.error("User Credentials not provided as function parameter object.");
-      return;
+      return registerSucceeded;
     }
 
     if (registerCredentials.userPassword !== registerCredentials.userConfirmPassword) {
       showToast("User passwords do not match", "warning");
-      return;
+      return registerSucceeded;
     }
 
     const userPayload = {
@@ -87,8 +88,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       userEmail: registerCredentials.userEmail as string,
       userPassword: registerCredentials.userPassword as string
     }
-
-    setUserLoading(true);
+    
     try {
       const stringifiedCrd = JSON.stringify(userPayload);
 
@@ -107,11 +107,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
       } else if (succMsg) {
         showToast(succMsg, "success");
         setNeedToVerifyEmail(true);
+        registerSucceeded = true;
       }
     } catch (err) {
       handleErr(err);
     }
-    setUserLoading(false);
+    
+    return registerSucceeded;
   }, [handleErr]);
 
   // logout function to logout user

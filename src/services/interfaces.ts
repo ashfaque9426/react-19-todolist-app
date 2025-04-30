@@ -14,7 +14,7 @@ export interface AuthContextType {
   setIsUserAvailable: (state: boolean) => void,
   login: (loginCredentials: LoginCredentials) => Promise<void>,
   logout: (userEmail: string) => Promise<void>,
-  registerUser: (registerCredentials: RegisterCredentials) => Promise<void>,
+  registerUser: (registerCredentials: RegisterCredentials) => Promise<boolean>,
   refreshTokenHandler: () => Promise<boolean>,
   scheduleTokenRefreshLoop: ScheduleTokenRefreshLoop
 }
