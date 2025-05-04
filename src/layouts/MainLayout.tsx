@@ -11,7 +11,7 @@ function MainLayout() {
         </header>
 
         {/* main component */}
-        <main role="main" className="px-0.5 md:px-3.5 lg:px-5" aria-labelledby="main-component">
+        <main role="main" aria-labelledby="main-component">
             <Outlet />
         </main>
 
