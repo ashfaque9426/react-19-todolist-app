@@ -74,12 +74,12 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const registerUser = async (registerCredentials: RegisterCredentials) => {
     let registerSucceeded = false;
     if (!registerCredentials) {
-      console.error("User Credentials not provided as function parameter object.");
+      console.error("Proper User Credentials are not provided as function parameter object.");
       return registerSucceeded;
     }
 
     if (registerCredentials.userPassword !== registerCredentials.userConfirmPassword) {
-      showToast("User passwords do not match", "warning");
+      console.error("Password and confirm password do not match.");
       return registerSucceeded;
     }
 
