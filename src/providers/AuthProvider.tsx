@@ -30,6 +30,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const handleServRes = (servRes: ServResUserLoginData) => {
     if (servRes.errMsg) {
       showToast(servRes.errMsg, "error");
+      setUserLoading(false);
     } else if (servRes.userData) {
       Cookies.set('uscTDLT', servRes.userData.accessToken);
       setUser({
