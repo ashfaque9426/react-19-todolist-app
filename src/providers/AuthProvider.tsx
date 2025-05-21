@@ -51,6 +51,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
+      setUserLoading(true);
       const stringifiedCrd = JSON.stringify(userCredentials);
 
       const serverRes = await fetch(`${loginUrl}`, {
@@ -65,6 +66,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
       handleServRes({ userData, errMsg });
     } catch (err) {
+      setUserLoading(false);
       handleErr(err);
     }
   };
@@ -242,11 +244,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
   // Check if the user is logged in or not
   // and set the user data in the state accordingly
   useEffect(() => {
-    setUserLoading(true);
     const userSecret = Cookies.get('uscTDLT');
     // check if the user is logged in but the user data is not available
     // then decode the jwt token and set the user data in the state
     if (!user && userSecret) {
+      setUserLoading(true);
       const decoded = decodeJwt(userSecret);
       const userId = decoded?.userId as number | undefined;
       const userName = decoded?.userName as string | undefined;
