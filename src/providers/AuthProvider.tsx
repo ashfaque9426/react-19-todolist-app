@@ -244,7 +244,23 @@ function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setUserLoading(true);
     const userSecret = Cookies.get('uscTDLT');
-    if (user && userSecret) {
+    // check if the user is logged in but the user data is not available
+    // then decode the jwt token and set the user data in the state
+    if (!user && userSecret) {
+      const decoded = decodeJwt(userSecret);
+      const userId = decoded?.userId as number | undefined;
+      const userName = decoded?.userName as string | undefined;
+      const userEmail = decoded?.userEmail as string | undefined;
+
+      if (userId !== undefined && userName && userEmail) {
+        setUser({
+          userId,
+          userName,
+          userEmail
+        });
+      }
+      setIsUserAvailable(true);
+    } else if (user && userSecret) {
       setIsUserAvailable(true);
     } else {
       setIsUserAvailable(false);
