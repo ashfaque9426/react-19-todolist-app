@@ -248,20 +248,19 @@ function AuthProvider({ children }: { children: ReactNode }) {
     // check if the user is logged in but the user data is not available
     // then decode the jwt token and set the user data in the state
     if (!user && userSecret) {
-      setUserLoading(true);
       const decoded = decodeJwt(userSecret);
       const userId = decoded?.userId as number | undefined;
       const userName = decoded?.userName as string | undefined;
       const userEmail = decoded?.userEmail as string | undefined;
 
       if (userId !== undefined && userName && userEmail) {
-        setUser({
-          userId,
-          userName,
-          userEmail
-        });
+        setUser({ userId, userName, userEmail });
       }
-    } else if (user && userSecret) {
+
+      return;
+    } 
+    
+    if (user && userSecret) {
       setIsUserAvailable(true);
     } else {
       setIsUserAvailable(false);
