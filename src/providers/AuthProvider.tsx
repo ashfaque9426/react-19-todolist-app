@@ -27,10 +27,10 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // server response handler function to handle server responses
-  const handleServRes = (servRes: ServResUserLoginData) => {
+  const handleServRes = (servRes: ServResUserLoginData): { success: string, error: string } => {
     if (servRes.errMsg) {
-      showToast(servRes.errMsg, "error");
       setUserLoading(false);
+      return { success: "", error: servRes.errMsg };
     } else if (servRes.userData) {
       Cookies.set('uscTDLT', servRes.userData.accessToken);
       setUser({
@@ -38,7 +38,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
         userName: servRes.userData.userName,
         userEmail: servRes.userData.userEmail
       });
+      
+      return { success: "User Login Successfull", error: "" };
     }
+
+    return { success: "", error: "Unknown Server Error Occured" };
   }
 
   // login function to login user
@@ -47,8 +51,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
     // check if the user credentials are provided or not
     // if not then return from the function
     if (!userCredentials) {
-      console.error("User Credentials not provided as function parameter object.");
-      return;
+      console.error("User Credentials are not provided as function parameter object.");
+      return { success: "", error: "Proper User Credentials are not provided as function's parameter object." };
     }
 
     try {
@@ -65,10 +69,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
       const { userData, errMsg } = await serverRes.json();
 
-      handleServRes({ userData, errMsg });
+      return handleServRes({ userData, errMsg });
     } catch (err) {
       setUserLoading(false);
       handleErr(err);
+      return { success: "", error: "An unknown server error occurred. Please try again later." };
     }
   };
 

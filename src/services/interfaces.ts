@@ -4,6 +4,11 @@ import { LoginCredentials, RegisterCredentials, User } from "./dataTypes";
 // This context will be used to provide authentication data and functions to the entire app
 type ScheduleTokenRefreshLoop = () => (() => void) | void;
 
+type LoginResult = {
+  success: string;
+  error: string;
+};
+
 export interface AuthContextType {
   user: User | undefined,
   setUser: (user: User) => void,
@@ -12,7 +17,7 @@ export interface AuthContextType {
   isUserAvailable: boolean,
   needToVerifyEmail: boolean,
   setIsUserAvailable: (state: boolean) => void,
-  login: (loginCredentials: LoginCredentials) => Promise<void>,
+  login: (loginCredentials: LoginCredentials) => Promise<LoginResult>,
   logout: (userEmail: string) => Promise<void>,
   registerUser: (registerCredentials: RegisterCredentials) => Promise<boolean>,
   refreshTokenHandler: () => Promise<boolean>,
