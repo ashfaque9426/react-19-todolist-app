@@ -259,7 +259,6 @@ function AuthProvider({ children }: { children: ReactNode }) {
           userEmail
         });
       }
-      setIsUserAvailable(true);
     } else if (user && userSecret) {
       setIsUserAvailable(true);
     } else {
