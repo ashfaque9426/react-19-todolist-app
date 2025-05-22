@@ -1,4 +1,4 @@
-import { useState, ReactNode, useEffect, createContext, useCallback } from "react";
+import { useState, ReactNode, useEffect, createContext, useCallback, useRef } from "react";
 import Cookies from 'js-cookie';
 import { loginUrl, logoutUrl, registerUrl } from "../constants/constants";
 import { decodeJwt } from "jose"
@@ -15,7 +15,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
   const [needToVerifyEmail, setNeedToVerifyEmail] = useState(false);
-  const [timeOutIdArr, setTimeOutIdArr] = useState<NodeJS.Timeout[]>([]);
+
+  // useRef to store the timeout ids for the refresh token loop
+  const timeoutIdArrRef = useRef<NodeJS.Timeout[]>([]);
 
   // error handler function to handle errors
   const handleErr: ErrorHandler = useCallback((err) => {
@@ -158,13 +160,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
         // reseting the refresh access token timeout loops by clearing the timeouts if available
         // and setting the timeout id array to empty array
-        timeOutIdArr.forEach(clearTimeout);
-        setTimeOutIdArr([]);
+        timeoutIdArrRef.current.forEach(clearTimeout);
+        timeoutIdArrRef.current = [];
       }
     } catch (err) {
       handleErr(err);
     }
-  }, [handleErr, timeOutIdArr]);
+  }, [handleErr]);
 
   // refresh token function to refresh the access token and store it in the cookies
   // success only true when the cookie is set successfully because on logout user needs to login again to get new refresh token
@@ -215,7 +217,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
             }
           });
         }, (timeUntilExpiry - 60) * 1000);
-        setTimeOutIdArr(prev => [...prev, refreshTimeout]);
+        timeoutIdArrRef.current.push(refreshTimeout);
       } else {
         refreshTokenHandler().then(success => {
           if (success) {
@@ -243,7 +245,11 @@ function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const cleanup = scheduleTokenRefreshLoop();
-    return cleanup;
+    return () => {
+      cleanup();
+      timeoutIdArrRef.current.forEach(clearTimeout);
+      timeoutIdArrRef.current = [];
+    };
   }, [isUserAvailable, scheduleTokenRefreshLoop]);
 
 
