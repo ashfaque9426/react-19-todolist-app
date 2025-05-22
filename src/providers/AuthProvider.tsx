@@ -40,7 +40,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
         userName: servRes.userData.userName,
         userEmail: servRes.userData.userEmail
       });
-      
+
       return { success: "User Login Successfull", error: "" };
     }
 
@@ -98,7 +98,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       userEmail: registerCredentials.userEmail as string,
       userPassword: registerCredentials.userPassword as string
     }
-    
+
     try {
       const stringifiedCrd = JSON.stringify(userPayload);
 
@@ -122,7 +122,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       handleErr(err);
     }
-    
+
     return registerSucceeded;
   }
 
@@ -199,7 +199,6 @@ function AuthProvider({ children }: { children: ReactNode }) {
       const token = Cookies.get('uscTDLT');
 
       if (!token) {
-        console.error("User is not logged in to schedule token refresh loop.");
         return;
       }
 
@@ -240,16 +239,14 @@ function AuthProvider({ children }: { children: ReactNode }) {
   // Schedule the token refresh loop when the component mounts
   // and clean up the interval when the component unmounts
   useEffect(() => {
-    if (!isUserAvailable) {
-      return;
+    if (isUserAvailable) {
+      const cleanup = scheduleTokenRefreshLoop();
+      return () => {
+        cleanup();
+        timeoutIdArrRef.current.forEach(clearTimeout);
+        timeoutIdArrRef.current = [];
+      };
     }
-
-    const cleanup = scheduleTokenRefreshLoop();
-    return () => {
-      cleanup();
-      timeoutIdArrRef.current.forEach(clearTimeout);
-      timeoutIdArrRef.current = [];
-    };
   }, [isUserAvailable, scheduleTokenRefreshLoop]);
 
 
@@ -270,8 +267,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       return;
-    } 
-    
+    }
+
     if (user && userSecret) {
       setIsUserAvailable(true);
     } else {
