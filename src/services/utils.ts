@@ -92,11 +92,10 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
 // for refresing the access token
 export const refreshAccessToken = async () => {
     try {
-        const res = await fetch(`${import.meta.env.REACT_APP_API_URL}/api/refresh-access-token`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/refresh-access-token`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' }
         });
 
         return await handleSuccMsgErrMsgRes(res, "Refresh Access Token Request");

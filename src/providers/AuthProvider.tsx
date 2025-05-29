@@ -63,6 +63,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
       const serverRes = await fetch(`${loginUrl}`, {
         method: 'PATCH',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -138,12 +139,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const serverRes = await fetch(`${logoutUrl}`, {
         method: 'PATCH',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${userSecret}`
         },
         body: JSON.stringify({ userEmail })
-      })
+      });
 
       const { succMsg, errMsg } = await serverRes.json();
 
