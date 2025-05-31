@@ -7,29 +7,16 @@ import {
 } from "react-router"
 import router from './Routes/Routes.ts'
 import ErrorBoundary from './ErrorBoundary.tsx'
-import { ToastContainer } from 'react-toastify'
 import LoadingData from './components/LoadingData.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ErrorBoundary fallback={"Unexpected Error Occured"}>
-      <Suspense fallback={<LoadingData />}>
-        <AuthProvider>
+    <AuthProvider>
+      <ErrorBoundary fallback={"Unexpected Error Occured"}>
+        <Suspense fallback={<LoadingData />}>
           <RouterProvider router={router} />
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick={false}
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-        </AuthProvider>
-      </Suspense>
-    </ErrorBoundary>
+        </Suspense>
+      </ErrorBoundary>
+    </AuthProvider>
   </StrictMode>,
 )
