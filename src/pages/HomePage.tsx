@@ -17,7 +17,7 @@ function HomePage() {
                 <section className='relative my-5 w-full md:w-2/3 2xl:w-1/2 mx-auto z-10' role='region' aria-labelledby='todo-list-section'>
                     <div className="flex flex-col items-center justify-center gap-5">
                         {/* Select date component */}
-                        <SelectDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} datesArr={[]} errMsg="" />
+                        <SelectDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
 
                         {/* todolists component */}
                         <TodoLists selectedDate={selectedDate} />

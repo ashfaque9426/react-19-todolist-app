@@ -40,6 +40,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
         userName: servRes.userData.userName,
         userEmail: servRes.userData.userEmail
       });
+      localStorage.setItem('udTDLT', JSON.stringify({ userId: servRes.userData.userId, userName: servRes.userData.userName, userEmail:servRes.userData.userEmail }));
 
       return { success: "User Login Successfull", error: "" };
     }
@@ -156,6 +157,9 @@ function AuthProvider({ children }: { children: ReactNode }) {
         showToast(succMsg, "success");
         // remove the cookie and set the user to undefined
         Cookies.remove('uscTDLT');
+
+        // clear the local storage data
+        localStorage.removeItem('udTDLT');
 
         // set the user to undefined
         setUser(undefined);
