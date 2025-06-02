@@ -202,3 +202,30 @@ export const showToast = (message: string, type: "success" | "error" | "info" | 
         theme: "light",
     });
 }
+
+export const errorHandler = (err: unknown, errSetter: boolean): { setErrMsgStr: string } => {
+    let errMsgStr = "";
+    if (err && typeof err === "object" && "response" in err) {
+        const axiosError = err as { response: { data: { dataArr?: null; errMsg?: string } } };
+        // The request was made, and the server responded with a status code outside the 2xx range
+        const { errMsg } = axiosError.response.data;
+        errMsgStr = errMsg || "An error occurred while processing your request.";
+      } else if (err && typeof err === "object" && "request" in err) {
+        // The request was made, but no response was received
+        const requestVal = (err as { request?: unknown }).request;
+        errMsgStr = typeof requestVal === "string" ? requestVal : requestVal ? JSON.stringify(requestVal) : "An error occurred while processing your request.";
+      } else if (err instanceof Error) {
+        // Something happened in setting up the request
+        errMsgStr = err.message || "An error occurred while processing your request.";
+      } else {
+        console.error('An unknown error occurred.');
+      }
+
+      if (errSetter) {
+        errMsgStr = errMsgStr || "An error occurred while processing your request.";
+        return { setErrMsgStr: errMsgStr };
+      } else {
+        console.error(errMsgStr);
+        return { setErrMsgStr: "" };
+      }
+}
