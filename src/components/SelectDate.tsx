@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import { v4 as uuidv4 } from 'uuid';
 
-function SelectDate({ selectedDate, setSelectedDate }: { selectedDate: string, setSelectedDate: (date: string) => void}) {
+function SelectDate({ selectedDate, setSelectedDate }: { selectedDate: string, setSelectedDate: (date: string) => void }) {
     const [dates, setDates] = useState<string[]>([]);
     const [err, setErr] = useState<string | null>(null);
 
@@ -38,15 +39,15 @@ function SelectDate({ selectedDate, setSelectedDate }: { selectedDate: string, s
         <>
             {
                 !err ? (
-                    <div className="w-full flex justify-between items-center mb-4">
+                    <div className="w-full relative flex justify-between items-center mb-4">
                         <span className="font-semibold text-lg">{selectedDate}</span>
 
                         {
-                            dates.length > 0 ? <span className="px-2 py-1 border rounded-lg cursor-pointer">
-                                <label htmlFor="date-select">Select a date:</label>
-                                <select id="date-select" value={selectedDate} onChange={handleDateChange}>
+                            dates.length > 0 ? <span className="cursor-pointer">
+                                <label className="text-lg font-semibold mr-1.5" htmlFor="date-select">Select a date:</label>
+                                <select className="px-2 py-1 border rounded-lg focus:outline-0" id="date-select" value={selectedDate} onChange={handleDateChange}>
                                     {dates.map((date: string) => (
-                                        <option key={date} value={date}>
+                                        <option className="text-black" key={uuidv4()} value={date}>
                                             {date}
                                         </option>
                                     ))}
