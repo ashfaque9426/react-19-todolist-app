@@ -2,25 +2,29 @@ import { useEffect, useState } from "react";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import useAuth from "../hooks/useAuth";
 import { errorHandler } from "../services/utils";
+import LoadingData from "./LoadingData";
+import ShowErrMsg from "./ShowErrMsg";
+import ShowDataCards from "./ShowDataCards";
 
 function TodoLists({ selectedDate }: { selectedDate: string }) {
   const { user } = useAuth();
   const [axiosSecure] = useAxiosSecure();
   const [loading, setLoading] = useState<boolean>(true);
-  const [userData, setUserData] = useState(null);
+  const [showLists, setShowLists] = useState<boolean>(false);
+  const [dataArr, setDataArr] = useState([]);
   const [errMsg, setErrMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
     const fetchData = async () => {
       try {
-        const { dataArr, errMsg } = (await axiosSecure.get(`/api/get-todo-records?userId=${user.userId}&date=${selectedDate}`)).data;
+        const { dataArr, errMsg } = (await axiosSecure.get(`/api/get-todo-lists-by-date?userId=${user.userId}&date=${selectedDate}`)).data;
 
         if (errMsg) {
           setErrMsg(errMsg);
         }
         else if (dataArr) {
-          setUserData(dataArr);
+          setDataArr(dataArr);
         }
       } catch (err) {
         const { setErrMsgStr } = errorHandler(err, true);
@@ -32,7 +36,7 @@ function TodoLists({ selectedDate }: { selectedDate: string }) {
   }, [axiosSecure, selectedDate, user]);
 
   return (
-    <div>{loading ? "Data Loading..." : errMsg ? errMsg : JSON.stringify(userData)}</div>
+    <div className="relative">{loading ? <LoadingData /> : errMsg ? <ShowErrMsg errMsg={errMsg} /> : showLists ? <ShowDataCards  dataArray={dataArr} showListsSetter={setShowLists} /> : ""}</div>
   )
 }
 
