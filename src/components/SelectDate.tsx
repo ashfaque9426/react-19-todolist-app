@@ -22,6 +22,7 @@ function SelectDate({ selectedDate, setSelectedDate }: { selectedDate: string, s
                     setErr(errMsg);
                 } else if (dateArr && Array.isArray(dateArr)) {
                     setDates(dateArr);
+                    setSelectedDate(dateArr[0] || new Date().toISOString().split('T')[0]);
                 }
             } catch (error) {
                 console.error("Error fetching todo dates: ", error);
@@ -29,8 +30,8 @@ function SelectDate({ selectedDate, setSelectedDate }: { selectedDate: string, s
             }
         }
 
-        fetchDates()
-    }, [axiosSecure]);
+        fetchDates();
+    }, [axiosSecure, setSelectedDate]);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
         setSelectedDate(event.target.value);
@@ -40,7 +41,7 @@ function SelectDate({ selectedDate, setSelectedDate }: { selectedDate: string, s
             {
                 !err ? (
                     <div className="w-full relative flex justify-between items-center mb-4">
-                        <span className="font-semibold text-lg">{selectedDate}</span>
+                        <span className="font-semibold text-lg">Date: {selectedDate}</span>
 
                         {
                             dates.length > 0 ? <span className="cursor-pointer">

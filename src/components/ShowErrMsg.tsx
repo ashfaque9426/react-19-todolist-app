@@ -1,6 +1,6 @@
 function ShowErrMsg({ errMsg }: { errMsg: string }) {
   return (
-    <p className="text-red-500 text-center">{errMsg}</p>
+    <p className="text-white text-center text-2xl">{errMsg}</p>
   )
 }
 

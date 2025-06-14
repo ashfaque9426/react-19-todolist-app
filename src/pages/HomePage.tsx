@@ -3,7 +3,7 @@ import SelectDate from '../components/SelectDate';
 import TodoLists from "../components/TodoLists";
 
 function HomePage() {
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [selectedDate, setSelectedDate] = useState("");
 
     return (
         <div className={`h-[calc(100vh-48px)] w-full bg-no-repeat bg-cover bg-center relative 

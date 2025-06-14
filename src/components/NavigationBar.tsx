@@ -9,7 +9,7 @@ function NavigationBar() {
   return (
     <nav className="flex flex-col md:flex-row justify-between items-center px-5 py-3" role="navigation">
       <section role="region" aria-label="Logo">
-        <a href="/" className="text-2xl font-bold">Todo List</a>
+        <a href="/" className="text-2xl font-bold">My List</a>
       </section>
 
       <ul className="flex flex-col md:flex-row items-center gap-4 mt-5 md:mt-0" role="menubar">
