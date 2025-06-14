@@ -7,13 +7,14 @@ import ShowErrMsg from "./ShowErrMsg";
 import ShowDataCards from "./ShowDataCards";
 import ShowDataTable from "./ShowDataTable";
 
-function TodoLists({ selectedDate }: { selectedDate: string }) {
+function TodoLists({ selectedDate, date }: { selectedDate: string, date: string }) {
   const { user } = useAuth();
   const [axiosSecure] = useAxiosSecure();
   const [loading, setLoading] = useState<boolean>(true);
   const [showDataTable, setShowDataTable] = useState<boolean>(false);
   const [dataArr, setDataArr] = useState([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [title, setTitle] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -44,7 +45,7 @@ function TodoLists({ selectedDate }: { selectedDate: string }) {
   }, [axiosSecure, selectedDate, user, errorMsg]);
 
   return (
-    <div className="relative">{loading ? <LoadingData /> : errorMsg ? <ShowErrMsg errMsg={errorMsg} /> : !showDataTable ? <ShowDataCards dataArray={dataArr} showTableDataSetter={setShowDataTable} /> : <ShowDataTable showTableDataSetter={setShowDataTable} />}</div>
+    <div className="relative">{loading ? <LoadingData /> : errorMsg ? <ShowErrMsg errMsg={errorMsg} /> : !showDataTable ? <ShowDataCards dataArray={dataArr} showTableDataSetter={setShowDataTable} setTitle={setTitle} /> : <ShowDataTable date={date} title={title} showTableDataSetter={setShowDataTable} />}</div>
   )
 }
 

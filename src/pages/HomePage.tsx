@@ -20,7 +20,7 @@ function HomePage() {
                         <SelectDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
 
                         {/* todolists component */}
-                        <TodoLists selectedDate={selectedDate} />
+                        <TodoLists selectedDate={selectedDate} date={selectedDate} />
                     </div>
                 </section>
             </div>
