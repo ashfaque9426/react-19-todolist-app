@@ -5,7 +5,7 @@ import { errorHandler } from "../services/utils";
 import LoadingData from "./LoadingData";
 import ShowErrMsg from "./ShowErrMsg";
 import ShowDataCards from "./ShowDataCards";
-import ShowDataTable from "./ShowDataTable";
+import ShowDataLists from "./ShowDataLIsts";
 
 function TodoLists({ selectedDate, date, title, setTitle }: { selectedDate: string, date: string, title: string, setTitle: (title: string) => void }) {
   const { user } = useAuth();
@@ -44,7 +44,7 @@ function TodoLists({ selectedDate, date, title, setTitle }: { selectedDate: stri
   }, [axiosSecure, selectedDate, user, errorMsg]);
 
   return (
-    <div className="relative">{loading ? <LoadingData /> : errorMsg ? <ShowErrMsg errMsg={errorMsg} /> : !showDataTable ? <ShowDataCards dataArray={dataArr} showTableDataSetter={setShowDataTable} setTitle={setTitle} /> : <ShowDataTable date={date} title={title} showTableDataSetter={setShowDataTable} setTitle={setTitle} />}</div>
+    <div className="relative">{loading ? <LoadingData /> : errorMsg ? <ShowErrMsg errMsg={errorMsg} /> : !showDataTable ? <ShowDataCards dataArray={dataArr} showTableDataSetter={setShowDataTable} setTitle={setTitle} /> : <ShowDataLists date={date} title={title} showTableDataSetter={setShowDataTable} setTitle={setTitle} />}</div>
   )
 }
 
