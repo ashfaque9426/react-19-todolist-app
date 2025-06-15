@@ -4,6 +4,7 @@ import TodoLists from "../components/TodoLists";
 
 function HomePage() {
     const [selectedDate, setSelectedDate] = useState("");
+    const [title, setTitle] = useState("");
 
     return (
         <div className={`h-[calc(100vh-48px)] w-full bg-no-repeat bg-cover bg-center relative 
@@ -15,12 +16,12 @@ function HomePage() {
             <h1 id='main-component' className='text-2xl text-center underline font-bold mt-12 mb-3.5 z-10'>My Todos</h1>
             <div className="px-1">
                 <section className='relative my-5 w-full md:w-2/3 2xl:w-1/2 mx-auto z-10' role='region' aria-labelledby='todo-list-section'>
-                    <div className="flex flex-col items-center justify-center gap-5">
+                    <div className="px-5">
                         {/* Select date component */}
-                        <SelectDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+                        <SelectDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} title={title} />
 
                         {/* todolists component */}
-                        <TodoLists selectedDate={selectedDate} date={selectedDate} />
+                        <TodoLists selectedDate={selectedDate} date={selectedDate} title={title} setTitle={setTitle} />
                     </div>
                 </section>
             </div>
