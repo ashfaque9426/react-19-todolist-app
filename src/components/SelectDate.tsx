@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { v4 as uuidv4 } from 'uuid';
+import { CiSquarePlus } from "react-icons/ci";
 
 function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: string, setSelectedDate: (date: string) => void, title: string }) {
     const [dates, setDates] = useState<string[]>([]);
@@ -40,15 +41,15 @@ function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: st
         <>
             {
                 !err ? (
-                    <div className="w-full px-2.5 py-1.5 bg-white opacity-80 rounded-lg flex mt-12 mb-5 shadow-lg">
-                        <div className="w-full flex justify-between items-center text-black">
+                    <div className="w-full p-3 lg:px-2.5 lg:py-1.5 bg-white opacity-80 rounded-lg flex mt-12 mb-7 shadow-lg">
+                        <div className="w-full flex flex-col lg:flex-row lg:justify-between lg:items-center gap-1.5 lg:gap-0 text-black">
                             <span className="font-semibold text-lg">Date: {selectedDate}</span>
 
                             {
-                                !title ? (<>
+                                !title ? (<div className="flex justify-between lg:justify-baseline items-center">
                                     {
                                         dates.length > 0 ? <span className="cursor-pointer">
-                                        <label className="text-lg font-semibold mr-1.5" htmlFor="date-select">Select a date:</label>
+                                        <label className="text-lg font-semibold mr-1.5 cursor-text" htmlFor="date-select">Select a date:</label>
                                         <select className="px-2 py-1 border rounded-lg focus:outline-0" id="date-select" value={selectedDate} onChange={handleDateChange}>
                                             {dates.map((date: string) => (
                                                 <option className="text-black" key={uuidv4()} value={date}>
@@ -58,7 +59,8 @@ function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: st
                                         </select>
                                     </span> : <span className="px-2 py-1 border rounded-lg cursor-pointer">{selectedDate}</span>
                                     }
-                                </>) : <p className="px-2 py-1 text-black font-semibold">{title}</p>
+                                    <button className="text-[40px] ml-1"><CiSquarePlus /></button>
+                                </div>) : <p className="lg:p-2 text-black font-semibold text-lg">{title}</p>
                             }
                         </div>
                     </div>

@@ -27,8 +27,8 @@ function NavigationBar() {
         </li>
       </ul>
 
-      <section role="region" aria-label="User Authentication">
-        {userLoading && <li className="text-lg">Loading...</li>}
+      <section className="mt-5 md:mt-auto" role="region" aria-label="User Authentication">
+        {userLoading && <p className="text-lg">Loading...</p>}
         {(isUserAvailable && user) ? (
           <div className="flex gap-5 items-center">
             <span className="text-lg font-semibold">

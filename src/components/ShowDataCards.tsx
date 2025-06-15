@@ -27,7 +27,7 @@ function ShowDataCards({ dataArray, showTableDataSetter, setTitle }: ParamsType)
     }
     
     return (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-black">
+        <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 text-black">
             {dataArray.map((data) => (
                 <li onClick={handleClick} key={uuidv4()} className="bg-white p-4 rounded-lg shadow mb-4">
                     <article>
