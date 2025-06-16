@@ -229,3 +229,16 @@ export const errorHandler = (err: unknown, errSetter: boolean): { setErrMsgStr: 
         return { setErrMsgStr: "" };
       }
 }
+
+export function isPastDate(dateString: string): boolean {
+    const inputDate = new Date(dateString);
+    const today = new Date();
+  
+    // Normalize both dates to midnight to compare only the date part
+    inputDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+  
+    // Return true only if the date is before today
+    return inputDate < today;
+}
+  

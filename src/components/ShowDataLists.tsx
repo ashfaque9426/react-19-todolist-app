@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import useAuth from "../hooks/useAuth";
-import { errorHandler } from "../services/utils";
+import { errorHandler, isPastDate } from "../services/utils";
 import { v4 as uuidv4 } from 'uuid';
 
 type TodoRecord = {
@@ -16,6 +16,7 @@ type TodoRecord = {
 
 function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTableDataSetter: (show: boolean) => void, date: string, title: string, setTitle: (title: string) => void }) {
     const [recordDataArr, setRecordDataArr] = useState<TodoRecord[]>([]);
+    const [isPending, setPending] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
@@ -47,6 +48,23 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
         showTableDataSetter(false);
     }
 
+    const handleDelete = async (recordId: string) => {
+        if (!user || !axiosSecure) return;
+        setPending(true);
+        try {
+            const res = await axiosSecure.delete(`/api/delete-todo-record/recordId=${recordId}`);
+            if (res.data.errMsg) {
+                setErrorMsg(res.data.errMsg);
+            } else {
+                setRecordDataArr(prev => prev.filter(record => record.ID !== recordId));
+            }
+        } catch (err) {
+            const { setErrMsgStr } = errorHandler(err, true);
+            setErrorMsg(setErrMsgStr);
+        }
+        setPending(false);
+    }
+
     if (!user || !axiosSecure) return <div className="text-center text-gray-500">No user data available</div>;
 
     return (
@@ -71,10 +89,10 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
                                                 <p><span className='font-semibold'>Status:</span><br /> {data.Status}</p>
                                             </div>
                                             <div className="flex flex-wrap gap-4">
-                                                <button disabled={data.Status === "completed"} className='px-2 py-1 bg-green-500 text-white cursor-pointer mt-3.5 rounded-lg'>{ data.Status === 'completed' ? "Completed" : "Complete?" }</button>
-                                                <button className='px-2 py-1 bg-black text-white cursor-pointer mt-3.5 rounded-lg'>Edit</button>
-                                                <button className='px-2 py-1 bg-red-500 text-white cursor-pointer mt-3.5 rounded-lg'>Delete</button>
-                                            </div>
+                                                    <button disabled={isPastDate(data.Date) || data.Status === "completed" || isPending} className='px-2 py-1 bg-green-500 text-white cursor-pointer mt-3.5 rounded-lg disabled:bg-green-300 disabled:cursor-not-allowed'>{(!isPending && data.Status === 'completed') ? "Completed" : isPending ? "Completing..." : "Complete?"}</button>
+                                                    <button disabled={isPastDate(data.Date)} className='px-2 py-1 bg-black text-white cursor-pointer mt-3.5 rounded-lg disabled:text-gray-500 disabled:cursor-not-allowed'>{!isPending ? "Edit" : "Editing..."}</button>
+                                                    <button onClick={() => handleDelete(data.ID)} disabled={isPastDate(data.Date)} className='px-2 py-1 bg-red-500 text-white cursor-pointer mt-3.5 rounded-lg disabled:bg-red-300 disabled:text-gray-100 disabled:cursor-not-allowed'>{!isPending ? "Delete" : "Deleting..."}</button>
+                                                </div>
                                         </article>
                                     </li>
                                 ))
