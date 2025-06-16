@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { v4 as uuidv4 } from 'uuid';
 import { CiSquarePlus } from "react-icons/ci";
+import { useNavigate } from "react-router";
 
 function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: string, setSelectedDate: (date: string) => void, title: string }) {
     const [dates, setDates] = useState<string[]>([]);
     const [err, setErr] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const [axiosSecure] = useAxiosSecure();
 
@@ -59,7 +61,7 @@ function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: st
                                         </select>
                                     </span> : <span className="px-2 py-1 border rounded-lg cursor-pointer">{selectedDate}</span>
                                     }
-                                    <button className="text-[40px] ml-1"><CiSquarePlus /></button>
+                                    <button onClick={() => navigate('/add-todo')} className="text-[40px] ml-1"><CiSquarePlus /></button>
                                 </div>) : <p className="lg:p-2 text-black font-semibold text-lg">{title}</p>
                             }
                         </div>

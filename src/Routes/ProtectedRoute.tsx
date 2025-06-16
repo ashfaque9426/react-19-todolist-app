@@ -10,7 +10,7 @@ function ProtectedRoute() {
 
     // Check if the auth.user object is undefined,that means user login credentials are missing and if so redirect to login page only if user is not trying to access the login, register or update password page
     if (!auth || !auth.isUserAvailable) {
-        if (location.pathname.startsWith("/login") || location.pathname.startsWith("/register") || location.pathname.startsWith("/update-password")) {
+        if (location.pathname.startsWith("/login") || location.pathname.startsWith("/register") || location.pathname.startsWith("/update-password") || location.pathname.startsWith("/verify-email")) {
             return <Outlet />;
         }
         return <Navigate to="/login" state={{ from: location }} />;
@@ -20,7 +20,7 @@ function ProtectedRoute() {
     if (auth.userLoading) return <LoadingData />;
 
     // Check if the token is available and and if the user is trying to access the login, register or update password page and if so redirect to home page
-    if (auth.isUserAvailable && (location.pathname.startsWith("/login") || location.pathname.startsWith("/register") || location.pathname.startsWith("/update-password"))) {
+    if (auth.isUserAvailable && (location.pathname.startsWith("/login") || location.pathname.startsWith("/register") || location.pathname.startsWith("/update-password") || location.pathname.startsWith("/verify-email"))) {
         return <Navigate to={"/"} replace />
     }
 

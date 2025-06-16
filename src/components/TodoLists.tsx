@@ -5,7 +5,7 @@ import { errorHandler } from "../services/utils";
 import LoadingData from "./LoadingData";
 import ShowErrMsg from "./ShowErrMsg";
 import ShowDataCards from "./ShowDataCards";
-import ShowDataLists from "./ShowDataLIsts";
+import ShowDataLists from "./ShowDataLists";
 
 function TodoLists({ selectedDate, date, title, setTitle }: { selectedDate: string, date: string, title: string, setTitle: (title: string) => void }) {
   const { user } = useAuth();

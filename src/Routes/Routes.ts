@@ -7,6 +7,9 @@ import HomePage from "../pages/HomePage";
 import EditSelectedTodo from "../pages/EditSelectedTodo";
 import About from "../pages/About";
 import UpdatePassword from "../pages/UpdatePassword";
+import AddTodo from "../pages/AddTodo";
+import EditTodo from "../pages/EditTodo";
+import EmailValidationConfirm from "../pages/EmailValidationConfirm";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +28,14 @@ const router = createBrowserRouter([
             Component: EditSelectedTodo
           },
           {
+            path: 'add-todo',
+            Component: AddTodo
+          },
+          {
+            path: 'edit-todo',
+            Component: EditTodo
+          },
+          {
             path: 'login',
             Component: Login
           },
@@ -35,6 +46,10 @@ const router = createBrowserRouter([
           {
             path: 'update-password',
             Component: UpdatePassword
+          },
+          {
+            path: 'verify-email',
+            Component: EmailValidationConfirm
           }
         ]
       },

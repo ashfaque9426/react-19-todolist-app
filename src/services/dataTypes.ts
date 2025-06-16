@@ -26,3 +26,9 @@ export type ServResUserLoginData = {
   },
   errMsg: string | undefined
 }
+
+// form states
+export type FormState = {
+  success: string;
+  error: string;
+};
