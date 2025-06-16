@@ -210,35 +210,94 @@ export const errorHandler = (err: unknown, errSetter: boolean): { setErrMsgStr: 
         // The request was made, and the server responded with a status code outside the 2xx range
         const { errMsg } = axiosError.response.data;
         errMsgStr = errMsg || "An error occurred while processing your request.";
-      } else if (err && typeof err === "object" && "request" in err) {
+    } else if (err && typeof err === "object" && "request" in err) {
         // The request was made, but no response was received
         const requestVal = (err as { request?: unknown }).request;
         errMsgStr = typeof requestVal === "string" ? requestVal : requestVal ? JSON.stringify(requestVal) : "An error occurred while processing your request.";
-      } else if (err instanceof Error) {
+    } else if (err instanceof Error) {
         // Something happened in setting up the request
         errMsgStr = err.message || "An error occurred while processing your request.";
-      } else {
+    } else {
         console.error('An unknown error occurred.');
-      }
+    }
 
-      if (errSetter) {
+    if (errSetter) {
         errMsgStr = errMsgStr || "An error occurred while processing your request.";
         return { setErrMsgStr: errMsgStr };
-      } else {
+    } else {
         console.error(errMsgStr);
         return { setErrMsgStr: "" };
-      }
+    }
 }
 
 export function isPastDate(dateString: string): boolean {
     const inputDate = new Date(dateString);
     const today = new Date();
-  
+
     // Normalize both dates to midnight to compare only the date part
     inputDate.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
-  
+
     // Return true only if the date is before today
     return inputDate < today;
 }
-  
+
+//  Converts a time string in "HH:MM AM/PM" format to "HH:MM" format for input fields
+export function convertToTimeInputValue(timeStr: string): string {
+    const [time, modifier] = timeStr.trim().split(" ");
+    // eslint-disable-next-line prefer-const
+    let [hours, minutes] = time.split(":").map(Number);
+
+    if (modifier.toUpperCase() === "PM" && hours !== 12) {
+        hours += 12;
+    }
+    if (modifier.toUpperCase() === "AM" && hours === 12) {
+        hours = 0;
+    }
+
+    const formattedHours = hours.toString().padStart(2, "0");
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+
+    return `${formattedHours}:${formattedMinutes}`;
+}
+
+//Converts a date string to a format suitable for HTML date input fields (YYYY-MM-DD)
+export function convertToDateInputValue(dateStr: string): string {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return "";
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+//  Formats a time string in "HH:MM" format to a 12-hour format with AM/PM
+export function formatTimeTo12Hour(timeStr: string): string {
+    const [hourStr, minuteStr] = timeStr.split(":");
+    let minutes: number | string = parseInt(minuteStr, 10);
+    let hours: number | string = parseInt(hourStr, 10);
+    const period = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12 || 12;
+    hours = hours.toString().padStart(2, "0");
+    minutes = minutes.toString().padStart(2, "0");
+
+    return `${hours}:${minutes} ${period}`;
+}
+
+// Formats a date string to a format suitable for HTML date input fields (YYYY-MM-DD)
+export function formatToDateInputValue(dateStr: string): string {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return "";
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+
+

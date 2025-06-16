@@ -32,7 +32,7 @@ const router = createBrowserRouter([
             Component: AddTodo
           },
           {
-            path: 'edit-todo',
+            path: 'edit-todo/:recordId',
             Component: EditTodo
           },
           {
