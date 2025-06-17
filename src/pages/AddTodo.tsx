@@ -18,12 +18,12 @@ function AddTodo() {
 
             try {
                 const response = await axiosSecure.get(`/api/get-todo-titles?userId=${user.userId}`);
-                const { titlesArr, errMsg } = response.data;
+                const { titleArr, errMsg } = response.data;
 
                 if (errMsg) {
                     console.error(errMsg);
                 } else {
-                    setArrOfTitles(titlesArr);
+                    setArrOfTitles(titleArr);
                 }
             } catch (error) {
                 errorHandler(error, false);
