@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import TodoForm from "../components/TodoForm";
 import useAuth from "../hooks/useAuth";
 import useAxiosSecure from "../hooks/useAxiosSecure";
@@ -5,10 +6,32 @@ import { FormState } from "../services/dataTypes";
 import { errorHandler, formatTimeTo12Hour, formatToDateInputValue } from "../services/utils";
 
 function AddTodo() {
+    const [arrOfTitles, setArrOfTitles] = useState<string[] | []>([]);
     // get user data from auth context
     const { user } = useAuth();
     // get axios instance with secure headers from custom hook
     const [axiosSecure] = useAxiosSecure();
+
+    useEffect(() => {
+        const fetchTodoTitles = async () => {
+            if (!user || !axiosSecure) return;
+
+            try {
+                const response = await axiosSecure.get(`/api/get-todo-titles?userId=${user.userId}`);
+                const { titlesArr, errMsg } = response.data;
+
+                if (errMsg) {
+                    console.error(errMsg);
+                } else {
+                    setArrOfTitles(titlesArr);
+                }
+            } catch (error) {
+                errorHandler(error, false);
+            }
+        };
+
+        fetchTodoTitles();
+    }, [user, axiosSecure]);
 
     // handle form submission for adding a todo record
     const handleFormSubmission = async (
@@ -58,7 +81,7 @@ function AddTodo() {
             <h1 className="font-semibold text-2xl text-center py-12">Add Todo Record</h1>
 
             {/* Todo Form for adding todo record */}
-            <TodoForm onSubmit={handleFormSubmission} />
+            <TodoForm onSubmit={handleFormSubmission} titleArr={arrOfTitles} />
         </div>
     )
 }

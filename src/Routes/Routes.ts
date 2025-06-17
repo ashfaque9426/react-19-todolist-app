@@ -4,7 +4,6 @@ import Login from "../pages/Login";
 import ProtectedRoute from './ProtectedRoute';
 import Registration from "../pages/Registration";
 import HomePage from "../pages/HomePage";
-import EditSelectedTodo from "../pages/EditSelectedTodo";
 import About from "../pages/About";
 import UpdatePassword from "../pages/UpdatePassword";
 import AddTodo from "../pages/AddTodo";
@@ -22,10 +21,6 @@ const router = createBrowserRouter([
           {
             index: true,
             Component: HomePage
-          },
-          {
-            path: 'edit-todo/:id',
-            Component: EditSelectedTodo
           },
           {
             path: 'add-todo',

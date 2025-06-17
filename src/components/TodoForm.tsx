@@ -1,8 +1,7 @@
 import React, { useActionState, useEffect, useState } from 'react';
-import { FormState } from '../services/dataTypes';
+import { FormState, RecordData } from '../services/dataTypes';
 import { v4 as uuidv4 } from 'uuid';
-import useAxiosSecure from '../hooks/useAxiosSecure';
-import { convertToDateInputValue, convertToTimeInputValue, errorHandler, showToast } from '../services/utils';
+import { convertToDateInputValue, convertToTimeInputValue } from '../services/utils';
 
 type Props = {
     onSubmit: (
@@ -10,12 +9,11 @@ type Props = {
         formData: FormData
     ) => Promise<FormState>;
     editTodo?: boolean;
-    recordId?: number;
+    recordData?: RecordData | null;
+    titleArr?: string[] | [];
 };
 
-const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordId }) => {
-    const [axiosSecure] = useAxiosSecure();
-    const [titleArr, setTitleArr] = useState<string[]>([]);
+const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr }) => {
     const [date, setDate] = useState<string>('');
     const [time, setTime] = useState<string>('');
     const [title, setTitle] = useState<string>('');
@@ -37,33 +35,15 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordId }) => {
 
     // on edit mode it will fetch the todo record data according to the recordId
     useEffect(() => {
-        const fetchTodoRecord = async () => {
-            if (!axiosSecure || !recordId) return;
-            try {
-                const response = await axiosSecure.get(`api/get-todo-record?recordId=${recordId}`);
-                const { recordData, errMsg } = response.data;
-
-                if (errMsg) {
-                    showToast(errMsg, 'error');
-                } else if (recordData) {
-                    const date = convertToDateInputValue(recordData.todo_date);
-                    const time = convertToTimeInputValue(recordData.todo_time);
-                    setDate(date);
-                    setTime(time);
-                    setTitle(recordData.todo_title);
-                    setDescription(recordData.todo_description);
-                }
-            } catch (error) {
-                errorHandler(error, false);
-                showToast('Failed to fetch todo record.', 'error');
-            }
+        if (editTodo && recordData) {
+            const date = convertToDateInputValue(recordData.todo_date);
+            const time = convertToTimeInputValue(recordData.todo_time);
+            setDate(date);
+            setTime(time);
+            setTitle(recordData.todo_title);
+            setDescription(recordData.todo_description);
         }
-
-        if (editTodo) {
-            setTitleArr([]);
-            fetchTodoRecord();
-        }
-    }, [editTodo, axiosSecure, recordId]);
+    }, [editTodo, recordData]);
 
     return (
         <form action={formAction} className="max-w-md mx-auto p-6 bg-[#ccbcbc] rounded-2xl shadow-lg space-y-6">
@@ -101,7 +81,7 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordId }) => {
 
             {/* select field for titles */}
             {
-                ((!showTitleInput || !editTodo) && titleArr.length > 0) ? (
+                ((!showTitleInput || !editTodo) && (titleArr && titleArr.length > 0)) ? (
                     <div className="flex justify-between lg:justify-baseline items-center">
                         <span className="cursor-pointer">
                             <label className="text-lg font-semibold mr-1.5 cursor-text" htmlFor="title-select">Select a Title:</label>
@@ -146,6 +126,22 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordId }) => {
                     className="w-full p-2 rounded-md bg-white text-black resize-none focus:outline-none"
                 />
             </div>
+
+            {/* Hidden status field */}
+            {
+                (editTodo && recordData) && <div className='invisible'>
+                    <label htmlFor="status" className="block text-sm font-medium mb-1">
+                        Status
+                    </label>
+                    <input
+                        type="text"
+                        id="status"
+                        name="status"
+                        value={recordData ? recordData.todo_status : ""}
+                        className="w-full p-2 rounded-md bg-white text-black resize-none focus:outline-none"
+                    />
+                </div>
+            }
 
             {/* Submit Button */}
             <div>

@@ -32,3 +32,14 @@ export type FormState = {
   success: string;
   error: string;
 };
+
+// record data type
+export type RecordData = {
+  id: number;
+  todo_date: string;
+  todo_title: string;
+  todo_description: string;
+  todo_time: string;
+  todo_status: string;
+  user_id: number;
+};

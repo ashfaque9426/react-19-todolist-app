@@ -3,6 +3,7 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import useAuth from "../hooks/useAuth";
 import { errorHandler, isPastDate } from "../services/utils";
 import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from "react-router";
 
 type TodoRecord = {
     ID: string;
@@ -20,6 +21,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
     const [errorMsg, setErrorMsg] = useState("");
     const { user } = useAuth();
     const [axiosSecure] = useAxiosSecure();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -90,7 +92,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
                                             </div>
                                             <div className="flex flex-wrap gap-4">
                                                     <button disabled={isPastDate(data.Date) || data.Status === "completed" || isPending} className='px-2 py-1 bg-green-500 text-white cursor-pointer mt-3.5 rounded-lg disabled:bg-green-300 disabled:cursor-not-allowed'>{(!isPending && data.Status === 'completed') ? "Completed" : isPending ? "Completing..." : "Complete?"}</button>
-                                                    <button disabled={isPastDate(data.Date)} className='px-2 py-1 bg-black text-white cursor-pointer mt-3.5 rounded-lg disabled:text-gray-500 disabled:cursor-not-allowed'>{!isPending ? "Edit" : "Editing..."}</button>
+                                                    <button onClick={() => navigate(`/edit-todo/${data.ID}`)} disabled={isPastDate(data.Date)} className='px-2 py-1 bg-black text-white cursor-pointer mt-3.5 rounded-lg disabled:text-gray-500 disabled:cursor-not-allowed'>Edit</button>
                                                     <button onClick={() => handleDelete(data.ID)} disabled={isPastDate(data.Date)} className='px-2 py-1 bg-red-500 text-white cursor-pointer mt-3.5 rounded-lg disabled:bg-red-300 disabled:text-gray-100 disabled:cursor-not-allowed'>{!isPending ? "Delete" : "Deleting..."}</button>
                                                 </div>
                                         </article>
