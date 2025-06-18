@@ -4,6 +4,7 @@ import useAuth from "../hooks/useAuth";
 import { errorHandler, isPastDate } from "../services/utils";
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from "react-router";
+import { ImCheckboxChecked, ImCheckboxUnchecked } from "react-icons/im";
 
 type TodoRecord = {
     ID: string;
@@ -84,17 +85,20 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
                                 recordDataArr.map((data) => (
                                     <li key={uuidv4()} className="bg-white p-4 rounded-lg shadow mb-4">
                                         <article className="p-4 flex flex-col xl:flex-row justify-between items-start gap-4">
-                                            <div className="flex flex-wrap gap-4">
+                                            <div className="flex flex-wrap gap-5">
+                                                <div>
+                                                    <span className="font-semibold">Checkmark:</span><br />
+                                                    <button disabled={isPastDate(data.Date) || data.Status === "completed" || isPending} className='cursor-pointer mt-1.5 rounded-lg disabled:cursor-not-allowed'>{data.Status === 'completed' ? <ImCheckboxChecked /> : <ImCheckboxUnchecked />}</button>
+                                                </div>
                                                 <p><span className='font-semibold'>Date:</span><br /> {data.Date}</p>
                                                 <p><span className='font-semibold'>Time:</span><br /> {data.Time}</p>
                                                 <p><span className='font-semibold'>Description:</span><br /> {data.Description}</p>
                                                 <p><span className='font-semibold'>Status:</span><br /> {data.Status}</p>
                                             </div>
                                             <div className="flex flex-wrap gap-4">
-                                                    <button disabled={isPastDate(data.Date) || data.Status === "completed" || isPending} className='px-2 py-1 bg-green-500 text-white cursor-pointer mt-3.5 rounded-lg disabled:bg-green-300 disabled:cursor-not-allowed'>{(!isPending && data.Status === 'completed') ? "Completed" : isPending ? "Completing..." : "Complete?"}</button>
-                                                    <button onClick={() => navigate(`/edit-todo/${data.ID}`)} disabled={isPastDate(data.Date)} className='px-2 py-1 bg-black text-white cursor-pointer mt-3.5 rounded-lg disabled:text-gray-500 disabled:cursor-not-allowed'>Edit</button>
-                                                    <button onClick={() => handleDelete(data.ID)} disabled={isPastDate(data.Date)} className='px-2 py-1 bg-red-500 text-white cursor-pointer mt-3.5 rounded-lg disabled:bg-red-300 disabled:text-gray-100 disabled:cursor-not-allowed'>{!isPending ? "Delete" : "Deleting..."}</button>
-                                                </div>
+                                                <button onClick={() => navigate(`/edit-todo/${data.ID}`)} disabled={isPastDate(data.Date)} className='px-2 py-1 bg-black text-white cursor-pointer mt-3.5 rounded-lg disabled:text-gray-500 disabled:cursor-not-allowed'>Edit</button>
+                                                <button onClick={() => handleDelete(data.ID)} disabled={isPastDate(data.Date)} className='px-2 py-1 bg-red-500 text-white cursor-pointer mt-3.5 rounded-lg disabled:bg-red-300 disabled:text-gray-100 disabled:cursor-not-allowed'>{!isPending ? "Delete" : "Deleting..."}</button>
+                                            </div>
                                         </article>
                                     </li>
                                 ))
