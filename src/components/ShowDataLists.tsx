@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import useAuth from "../hooks/useAuth";
-import { errorHandler, isPastDate } from "../services/utils";
+import { errorHandler, isPastDate, showToast } from "../services/utils";
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from "react-router";
 import { ImCheckboxChecked, ImCheckboxUnchecked } from "react-icons/im";
@@ -51,6 +51,29 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
         showTableDataSetter(false);
     }
 
+    const handleComeplete = async (recordId: string, date: string) => {
+        if(!user || !axiosSecure) return;
+        else if (!recordId || !date) {
+            showToast("Record ID and Date parameter values are required to complete a record.", "error");
+            return;
+
+        }
+        setPending(true);
+        try {
+            const res = await axiosSecure.patch('/api/complete-todo-record', { userId: user.userId, recordId, date });
+
+            if (res.data.errMsg) {
+                showToast(res.data.errMsg, "error");
+            } else {
+                setRecordDataArr(prev => prev.map(record => record.ID === recordId ? { ...record, Status: "completed" } : record));
+            }
+        } catch (err) {
+            const { setErrMsgStr } = errorHandler(err, true);
+            setErrorMsg(setErrMsgStr);
+        }
+        setPending(false);
+    }
+
     const handleDelete = async (recordId: string) => {
         if (!user || !axiosSecure) return;
         setPending(true);
@@ -88,7 +111,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
                                             <div className="flex flex-wrap gap-5">
                                                 <div>
                                                     <span className="font-semibold">Checkmark:</span><br />
-                                                    <button disabled={isPastDate(data.Date) || data.Status === "completed" || isPending} className='cursor-pointer mt-1.5 rounded-lg disabled:cursor-not-allowed'>{data.Status === 'completed' ? <ImCheckboxChecked /> : <ImCheckboxUnchecked />}</button>
+                                                    <button onClick={() => handleComeplete(data.ID, data.Date)} disabled={isPastDate(data.Date) || data.Status === "completed" || isPending} className='cursor-pointer mt-1.5 rounded-lg disabled:cursor-not-allowed'>{data.Status === 'completed' ? <ImCheckboxChecked /> : <ImCheckboxUnchecked />}</button>
                                                 </div>
                                                 <p><span className='font-semibold'>Date:</span><br /> {data.Date}</p>
                                                 <p><span className='font-semibold'>Time:</span><br /> {data.Time}</p>
