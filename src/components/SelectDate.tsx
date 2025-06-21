@@ -3,30 +3,36 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { v4 as uuidv4 } from 'uuid';
 import { CiSquarePlus } from "react-icons/ci";
 import { useNavigate } from "react-router";
+import useAuth from "../hooks/useAuth";
 
 function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: string, setSelectedDate: (date: string) => void, title: string }) {
     const [dates, setDates] = useState<string[]>([]);
     const [err, setErr] = useState<string | null>(null);
     const navigate = useNavigate();
 
+    const { user } = useAuth();
+
     const [axiosSecure] = useAxiosSecure();
 
     useEffect(() => {
         const fetchDates = async () => {
-            const userData = JSON.parse(localStorage.getItem('udTDLT') || '{}');
-            if (!userData || !userData.userId) {
+            if (!user || !user.userId) {
                 console.error("User is not logged in or user data has been deleted by user accidentally.");
                 return;
             }
-            const userId = userData.userId;
+
+            const userId = user.userId;
             try {
-                const { dateArr, errMsg } = (await axiosSecure.get(`/api/get-todo-dates?userId=${userId}`)).data;
+                const response = await axiosSecure.get(`/api/get-todo-dates?userId=${userId}`);
+                const { dateArr, errMsg } = response.data;
+                
                 if (errMsg) {
                     setErr(errMsg);
-                } else if (dateArr && Array.isArray(dateArr)) {
-                    setDates(dateArr);
-                    setSelectedDate(dateArr[0] || new Date().toISOString().split('T')[0]);
+                    return;
                 }
+
+                setDates(dateArr);
+                setSelectedDate(dateArr[0]);
             } catch (error) {
                 console.error("Error fetching todo dates: ", error);
                 setErr("Failed to fetch todo dates.");
@@ -34,11 +40,12 @@ function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: st
         }
 
         fetchDates();
-    }, [axiosSecure, setSelectedDate]);
+    }, [axiosSecure, setSelectedDate, user]);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
         setSelectedDate(event.target.value);
     };
+
     return (
         <>
             {

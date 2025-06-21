@@ -299,5 +299,27 @@ export function formatToDateInputValue(dateStr: string): string {
     return `${year}-${month}-${day}`;
 }
 
+// check if the time has passed or not
+export function hasDateTimePassed(dateStr: string, timeStr: string): boolean {
+    // Parse the time into 24-hour format
+    const [time, modifier] = timeStr.split(' ');
+    // eslint-disable-next-line prefer-const
+    let [hours, minutes] = time.split(':').map(Number);
 
+    if (modifier === 'PM' && hours !== 12) {
+        hours += 12;
+    } else if (modifier === 'AM' && hours === 12) {
+        hours = 0;
+    }
+
+    // Create the target Date object
+    const targetDateTime = new Date(dateStr);
+    targetDateTime.setHours(hours, minutes, 0, 0); // set hours, minutes, seconds, milliseconds
+
+    // Get current Date and time
+    const now = new Date();
+
+    // Compare
+    return targetDateTime < now;
+}
 
