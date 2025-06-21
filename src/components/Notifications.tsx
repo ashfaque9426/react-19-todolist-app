@@ -91,7 +91,7 @@ function Notifications() {
                     return;
                 }
 
-                if (JSON.stringify(dataObj.timesArr) !== JSON.stringify(record.times)) {
+                if (JSON.stringify(dataObj) !== JSON.stringify(record)) {
                     const recordObj = {
                         date: dataObj.date,
                         times: dataObj.timesArr
