@@ -2,6 +2,7 @@ import { NavLink } from "react-router"
 import useAuth from "../hooks/useAuth"
 import NavigateButton from "./NavigateButton";
 import cn from "../lib/clsx";
+import Notifications from "./Notifications";
 
 function NavigationBar() {
   const { isUserAvailable, userLoading, user, logout } = useAuth();
@@ -33,6 +34,9 @@ function NavigationBar() {
           <div className="flex gap-5 items-center">
             <span className="text-lg font-semibold">
               {user.userName}
+            </span>
+            <span>
+              <Notifications />
             </span>
             <span className="text-lg">
               <button className="btn-primary" onClick={() => logout(user.userEmail)}>Logout</button>
