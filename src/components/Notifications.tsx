@@ -77,7 +77,7 @@ function Notifications() {
             for (let i = 0; i < record.times.length; i++) {
                 const time = record.times[i];
                 await waitUntilTimePassed(record.date, time); // wait until passed
-                setNotifications(prev => [...prev, `Your scheduled for time: ${time} has just passed. Notification at: ${time}`]);
+                setNotifications(prev => [...prev, `Your scheduled for time: ${time} has just passed. ${record.date}/${time}`]);
                 setNotificationCount(prev => prev + 1);
             }
         };
@@ -133,7 +133,7 @@ function Notifications() {
                                 {notifications.reverse().map((notification) => (
                                     <li key={uuidv4()} className="relative text-black">
                                         <span>{notification.split(". ")[0]}</span>
-                                        <small className="absolute bottom-0 right-0 text-xs text-gray-500">{notification.split(". ")[1]}</small>    
+                                        <small className="absolute bottom-0 right-0 text-xs text-gray-500">Date:{notification.split(". ")[1].split("/")[0]} Time:{notification.split(". ")[1].split("/")[1]}</small>
                                     </li>
                                 ))}
                             </ul>
