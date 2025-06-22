@@ -15,6 +15,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
   const [needToVerifyEmail, setNeedToVerifyEmail] = useState(false);
+  const [fetchNotifications, setFetchNotifications] = useState(false);
 
   // useRef to store the timeout ids for the refresh token loop
   const timeoutIdArrRef = useRef<NodeJS.Timeout[]>([]);
@@ -284,7 +285,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, setIsUserAvailable, login, registerUser, logout, refreshTokenHandler, scheduleTokenRefreshLoop }}>{children}</AuthContext>
+    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, fetchNotifications, setIsUserAvailable, setFetchNotifications, login, registerUser, logout, refreshTokenHandler, scheduleTokenRefreshLoop }}>{children}</AuthContext>
   )
 }
 

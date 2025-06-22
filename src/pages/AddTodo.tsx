@@ -8,7 +8,7 @@ import { errorHandler, formatTimeTo12Hour, formatToDateInputValue } from "../ser
 function AddTodo() {
     const [arrOfTitles, setArrOfTitles] = useState<string[] | []>([]);
     // get user data from auth context
-    const { user } = useAuth();
+    const { user, setFetchNotifications } = useAuth();
     // get axios instance with secure headers from custom hook
     const [axiosSecure] = useAxiosSecure();
 
@@ -55,13 +55,19 @@ function AddTodo() {
             console.log({ date: convertedDate, time: convertedTime, title, description, status });
             const payload = { date: convertedDate, time: convertedTime, title, description, status, userId: user?.userId };
 
+            // Make a POST request to add the todo record
             const response = await axiosSecure.post('/api/add-todo-record', payload);
             const { succMsg, errMsg } = response.data;
 
+            // If there is an error message, return it
             if (errMsg) {
                 return { success: '', error: errMsg };
             }
 
+            // If the record is added successfully, update the setFetchNotification state to fetch notifications
+            setFetchNotifications(true);
+
+            // return success message
             return { success: succMsg, error: '' };
             
         } catch (error) {

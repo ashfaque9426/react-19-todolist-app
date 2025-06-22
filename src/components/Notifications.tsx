@@ -4,6 +4,7 @@ import { errorHandler, hasDateTimePassed } from '../services/utils';
 import { MdOutlineNotificationsActive } from "react-icons/md";
 import useAuth from '../hooks/useAuth';
 import useAxiosSecure from '../hooks/useAxiosSecure';
+import { v4 as uuidv4 } from 'uuid';
 
 type TimeRecord = {
     date: string;
@@ -32,8 +33,9 @@ function Notifications() {
     const [notifications, setNotifications] = useState<string[]>([]);
     const [notificationCount, setNotificationCount] = useState(0);
     const [showNotifications, setShowNotifications] = useState(false);
+    const [compLoaded, setCompLoaded] = useState(false);
 
-    const { user } = useAuth();
+    const { user, fetchNotifications, setFetchNotifications } = useAuth();
     const [axiosSecure] = useAxiosSecure();
 
     const handleNotificationClick = () => {
@@ -42,6 +44,10 @@ function Notifications() {
             setNotificationCount(0);
         }
     }
+
+    useEffect(() => {
+        if (user) setCompLoaded(true);
+    }, [user]);
 
     useEffect(() => {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(record));
@@ -59,7 +65,7 @@ function Notifications() {
     }, []);
 
     useEffect(() => {
-        if (!record.date || record.date !== new Date().toISOString().split('T')[0]) return;
+        if (!(record.date && record.date === new Date().toISOString().split('T')[0])) return;
     
         const waitUntilTimePassed = async (date: string, time: string) => {
             while (!hasDateTimePassed(date, time)) {
@@ -71,7 +77,7 @@ function Notifications() {
             for (let i = 0; i < record.times.length; i++) {
                 const time = record.times[i];
                 await waitUntilTimePassed(record.date, time); // wait until passed
-                setNotifications(prev => [...prev, `Your scheduled time: ${time} has passed.`]);
+                setNotifications(prev => [...prev, `Your scheduled for time: ${time} has just passed. Notification at: ${time}`]);
                 setNotificationCount(prev => prev + 1);
             }
         };
@@ -104,8 +110,13 @@ function Notifications() {
             }
         }
 
+        if (compLoaded || fetchNotifications) {
+            fetchTodoTimesForToday();
+            if (fetchNotifications) setFetchNotifications(false);
+        }
+
         fetchTodoTimesForToday();
-    }, [user, axiosSecure, record]);
+    }, [user, axiosSecure, record, fetchNotifications, setFetchNotifications, compLoaded]);
 
     return (
         <div className='relative'>
@@ -119,8 +130,11 @@ function Notifications() {
                     {
                         notifications.length > 0 ? (
                             <ul className=" mt-2">
-                                {notifications.reverse().map((notification, index) => (
-                                    <li key={index} className="text-black">{notification}</li>
+                                {notifications.reverse().map((notification) => (
+                                    <li key={uuidv4()} className="relative text-black">
+                                        <span>{notification.split(". ")[0]}</span>
+                                        <small className="absolute bottom-0 right-0 text-xs text-gray-500">{notification.split(". ")[1]}</small>    
+                                    </li>
                                 ))}
                             </ul>
                         ) : (

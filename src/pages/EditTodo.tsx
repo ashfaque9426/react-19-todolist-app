@@ -4,12 +4,14 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useEffect, useState } from "react";
 import { errorHandler, formatTimeTo12Hour, formatToDateInputValue, showToast } from "../services/utils";
 import TodoForm from "../components/TodoForm";
+import useAuth from "../hooks/useAuth";
 
 function EditTodo() {
     const [recordData, setRecordData] = useState<RecordData | null>(null);
     const [axiosSecure] = useAxiosSecure();
     const { recordId } = useParams<{ recordId: string }>();
     const recordIdNumber = recordId ? parseInt(recordId, 10) : null;
+    const { setFetchNotifications } = useAuth();
 
     useEffect(() => {
         const fetchTodoRecord = async () => {
@@ -66,11 +68,12 @@ function EditTodo() {
             }
             
             showToast(succMsg, 'success');
+            setFetchNotifications(true);
+            return { success: 'Form submitted successfully', error: '' };
         } catch (error) {
             const { setErrMsgStr } = errorHandler(error, true);
             return { success: '', error: setErrMsgStr };
         }
-        return { success: 'Form submitted successfully', error: '' };
     }
     return (
         <div className={`h-[calc(100vh-48px)] w-full bg-no-repeat bg-cover bg-center relative 

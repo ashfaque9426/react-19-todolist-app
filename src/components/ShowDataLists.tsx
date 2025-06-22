@@ -20,7 +20,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
     const [recordDataArr, setRecordDataArr] = useState<TodoRecord[]>([]);
     const [isPending, setPending] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
-    const { user } = useAuth();
+    const { user, setFetchNotifications } = useAuth();
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
 
@@ -83,6 +83,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
                 setErrorMsg(res.data.errMsg);
             } else {
                 setRecordDataArr(prev => prev.filter(record => record.ID !== recordId));
+                setFetchNotifications(true);
             }
         } catch (err) {
             const { setErrMsgStr } = errorHandler(err, true);
