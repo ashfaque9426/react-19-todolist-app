@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { LOCAL_STORAGE_KEY } from '../constants/constants';
+import { LOCAL_STORAGE_KEY, LOCAL_STORAGE_KEY_NOTIFICATIONS, LOCAL_STORAGE_KEY_NOTIFY_COUNT } from '../constants/constants';
 import { errorHandler, hasDateTimePassed } from '../services/utils';
 import { MdOutlineNotificationsActive } from "react-icons/md";
 import useAuth from '../hooks/useAuth';
@@ -18,10 +18,8 @@ const getInitialRecord = (): TimeRecord => {
         if (parsedValue.date !== "" && parsedValue.date !== new Date().toISOString().split('T')[0]) {
             localStorage.removeItem(LOCAL_STORAGE_KEY);
             return { date: '', times: [] };
-        } else if (parsedValue.date !== new Date().toISOString().split('T')[0] && parsedValue.times.length > 0) {
-            return parsedValue;
         }
-        return { date: '', times: [] };
+        return parsedValue;
     } catch {
         return { date: '', times: [] };
     }
@@ -41,18 +39,19 @@ function Notifications() {
 
     // handling clicking on the notification icon
     const handleNotificationClick = () => {
-        setShowNotifications(!showNotifications);
         if (showNotifications) {
             setNotificationCount(0);
-            localStorage.setItem('NotifyCount', JSON.stringify(0));
+            localStorage.setItem(LOCAL_STORAGE_KEY_NOTIFY_COUNT, JSON.stringify(0));
         }
+
+        setShowNotifications(!showNotifications);
     }
 
     // Effect to set component loaded state when user is available and to fetch initial notifications and notification count from localStorage before connecting to the server
     // This ensures that the component is ready to display notifications when the user is logged in
     useEffect(() => {
-        const storedNotifications = JSON.parse(localStorage.getItem('Notifications') || '[]');
-        const storedNotificationCount = JSON.parse(localStorage.getItem('NotifyCount') || '0');
+        const storedNotifications = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
+        const storedNotificationCount = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFY_COUNT) || '0');
         if (user && !compLoaded) {
             if (storedNotifications && storedNotifications.length > 0) setNotificationCount(storedNotifications);
             if (storedNotificationCount > 0) setNotificationCount(storedNotificationCount);
@@ -67,7 +66,7 @@ function Notifications() {
             if (event.key === LOCAL_STORAGE_KEY && event.newValue) {
                 setRecord(JSON.parse(event.newValue));
             }
-            if (event.key === 'NotifyCount' && event.newValue) {
+            if (event.key === LOCAL_STORAGE_KEY_NOTIFY_COUNT && event.newValue) {
                 setNotificationCount(Number(event.newValue));
             }
         };
@@ -102,10 +101,10 @@ function Notifications() {
                     if (!prevNotifications.includes(notifyStr)) {
                         setNotificationCount(prevCount => {
                             const newCount = prevCount + 1;
-                            localStorage.setItem('NotifyCount', JSON.stringify(newCount));
+                            localStorage.setItem(LOCAL_STORAGE_KEY_NOTIFY_COUNT, JSON.stringify(newCount));
                             return newCount;
                         });
-                        localStorage.setItem('Notifications', JSON.stringify([...prevNotifications, notifyStr]));
+                        localStorage.setItem(LOCAL_STORAGE_KEY_NOTIFICATIONS, JSON.stringify([...prevNotifications, notifyStr]));
                         return [...prevNotifications, notifyStr];
                     }
                     return prevNotifications;
