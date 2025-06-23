@@ -69,12 +69,12 @@ function Notifications() {
     useEffect(() => {
         const storedNotifications = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
         const storedNotificationCount = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFY_COUNT) || '0');
-        if (user && !compLoaded) {
-            if (storedNotifications && storedNotifications.length > 0) setNotificationCount(storedNotifications);
+        if (user && !compLoaded && Object.keys(record).length > 0) {
+            if (storedNotifications && storedNotifications.length > 0) setNotifications(storedNotifications);
             if (storedNotificationCount > 0) setNotificationCount(storedNotificationCount);
             setCompLoaded(true);
         }
-    }, [user, compLoaded]);
+    }, [user, compLoaded, record]);
 
     // Effect to handle storage changes across tabs
     // This will update the record and notification count when changes are made in other tabs
