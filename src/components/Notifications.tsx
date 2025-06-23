@@ -34,6 +34,7 @@ function Notifications() {
     const [notificationCount, setNotificationCount] = useState(0);
     const [showNotifications, setShowNotifications] = useState(false);
     const [compLoaded, setCompLoaded] = useState(false);
+    const [todoTimesFetched, setTodoTimesFetched] = useState(false);
 
     const { user, fetchNotifications, setFetchNotifications } = useAuth();
     const [axiosSecure] = useAxiosSecure();
@@ -52,22 +53,12 @@ function Notifications() {
     useEffect(() => {
         const storedNotifications = JSON.parse(localStorage.getItem('Notifications') || '[]');
         const storedNotificationCount = JSON.parse(localStorage.getItem('NotifyCount') || '0');
-        if (user) {
+        if (user && !compLoaded) {
             if (storedNotifications && storedNotifications.length > 0) setNotificationCount(storedNotifications);
             if (storedNotificationCount > 0) setNotificationCount(storedNotificationCount);
             setCompLoaded(true);
         }
-    }, [user]);
-
-    // Effect to update localStorage whenever record changes
-    useEffect(() => {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(record));
-    }, [record]);
-
-    // Effect to update notification count in localStorage whenever it changes
-    useEffect(() => {
-        localStorage.setItem('NotifyCount', JSON.stringify(notificationCount));
-    }, [notificationCount]);
+    }, [user, compLoaded]);
 
     // Effect to handle storage changes across tabs
     // This will update the record and notification count when changes are made in other tabs
@@ -89,7 +80,7 @@ function Notifications() {
     // and notify the user when each time has passed
     useEffect(() => {
         // If the record date is not today, do nothing
-        if (!(record.date && record.date === new Date().toISOString().split('T')[0])) return;
+        if (!(todoTimesFetched && record.date && record.date === new Date().toISOString().split("T")[0] && record.times.length > 0)) return;
     
         // If there are no times, do nothing else waiting for times to pass
         const waitUntilTimePassed = async (date: string, time: string) => {
@@ -123,13 +114,13 @@ function Notifications() {
         };
     
         checkTimesSequentially();
-    }, [record]);
+    }, [record, compLoaded, todoTimesFetched]);
     
     // Effect to fetch todo times for today from the server and update the record state
     // This will also update the localStorage with the new record
     useEffect(() => {
-        const fetchTodoTimesForToday = async () => {
-            if (!user || !axiosSecure) return;
+        const todoTimesFetchedForToday = async () => {
+            if (!user || !axiosSecure || !record) return;
             try {
                 const response = await axiosSecure.get(`/api/get-todo-times-for-today?userId=${user.userId}`);
                 const { dataObj, errMsg } = response.data;
@@ -147,17 +138,19 @@ function Notifications() {
                     setRecord(recordObj);
                     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(recordObj));
                 }
+
+                setTodoTimesFetched(true);
             } catch (error) {
                 errorHandler(error, false);
             }
         }
 
         if (compLoaded || fetchNotifications) {
-            fetchTodoTimesForToday();
+            todoTimesFetchedForToday();
             if (fetchNotifications) setFetchNotifications(false);
         }
 
-        fetchTodoTimesForToday();
+        todoTimesFetchedForToday();
     }, [user, axiosSecure, record, fetchNotifications, setFetchNotifications, compLoaded]);
 
     return (
