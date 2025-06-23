@@ -8,6 +8,7 @@ import useAuth from "../hooks/useAuth";
 function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: string, setSelectedDate: (date: string) => void, title: string }) {
     const [dates, setDates] = useState<string[]>([]);
     const [err, setErr] = useState<string | null>(null);
+    const [todoDatesFetched, setTodoDatesFetched] = useState(false);
     const navigate = useNavigate();
 
     const { user } = useAuth();
@@ -16,8 +17,7 @@ function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: st
 
     useEffect(() => {
         const fetchDates = async () => {
-            if (!user || !user.userId) {
-                console.error("User is not logged in or user data has been deleted by user accidentally.");
+            if (!user || !axiosSecure) {
                 return;
             }
 
@@ -25,22 +25,28 @@ function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: st
             try {
                 const response = await axiosSecure.get(`/api/get-todo-dates?userId=${userId}`);
                 const { dateArr, errMsg } = response.data;
-                
+
                 if (errMsg) {
                     setErr(errMsg);
                     return;
                 }
 
                 setDates(dateArr);
-                setSelectedDate(dateArr[0]);
+                if (dateArr.length > 0 && selectedDate !== dateArr[0]) {
+                    setSelectedDate(dateArr[0]);
+                }
+                setTodoDatesFetched(true);
             } catch (error) {
                 console.error("Error fetching todo dates: ", error);
                 setErr("Failed to fetch todo dates.");
             }
         }
 
-        fetchDates();
-    }, [axiosSecure, setSelectedDate, user]);
+        if(!todoDatesFetched) {
+            fetchDates();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [axiosSecure, setSelectedDate, user, todoDatesFetched]);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
         setSelectedDate(event.target.value);
@@ -58,15 +64,15 @@ function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: st
                                 !title ? (<div className="flex justify-between lg:justify-baseline items-center">
                                     {
                                         dates.length > 0 ? <span className="cursor-pointer">
-                                        <label className="text-lg font-semibold mr-1.5 cursor-text" htmlFor="date-select">Select a date:</label>
-                                        <select className="px-2 py-1 border rounded-lg focus:outline-0" id="date-select" value={selectedDate} onChange={handleDateChange}>
-                                            {dates.map((date: string) => (
-                                                <option className="text-black" key={uuidv4()} value={date}>
-                                                    {date}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </span> : <span className="px-2 py-1 border rounded-lg cursor-pointer">{selectedDate}</span>
+                                            <label className="text-lg font-semibold mr-1.5 cursor-text" htmlFor="date-select">Select a date:</label>
+                                            <select className="px-2 py-1 border rounded-lg focus:outline-0" id="date-select" value={selectedDate} onChange={handleDateChange}>
+                                                {dates.map((date: string) => (
+                                                    <option className="text-black" key={uuidv4()} value={date}>
+                                                        {date}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </span> : <span className="px-2 py-1 border rounded-lg cursor-pointer">{selectedDate}</span>
                                     }
                                     <button onClick={() => navigate('/add-todo')} className="text-[40px] ml-1"><CiSquarePlus /></button>
                                 </div>) : <p className="lg:p-2 text-black font-semibold text-lg">{title}</p>

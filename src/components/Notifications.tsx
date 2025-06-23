@@ -35,6 +35,7 @@ function Notifications() {
     const [showNotifications, setShowNotifications] = useState(false);
     const [compLoaded, setCompLoaded] = useState(false);
     const [todoTimesFetched, setTodoTimesFetched] = useState(false);
+    const [today, setToday] = useState(new Date());
 
     const { user, fetchNotifications, setFetchNotifications } = useAuth();
     const [axiosSecure] = useAxiosSecure();
@@ -48,6 +49,20 @@ function Notifications() {
 
         setShowNotifications(!showNotifications);
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          const now = new Date();
+          // Only update if the date (day) has actually changed
+          if (now.toDateString() !== today.toDateString()) {
+            // Triggers useEffect
+            setToday(now);
+          }
+        }, 60 * 1000); // check every minute
+    
+        // cleanup
+        return () => clearInterval(interval);
+      }, [today]);
 
     // Effect to set component loaded state when user is available and to fetch initial notifications and notification count from localStorage before connecting to the server
     // This ensures that the component is ready to display notifications when the user is logged in
@@ -121,38 +136,37 @@ function Notifications() {
     // This will also update the localStorage with the new record
     useEffect(() => {
         const todoTimesFetchedForToday = async () => {
-            if (!user || !axiosSecure || !record) return;
+            if (!user || !axiosSecure) return;
             try {
                 const response = await axiosSecure.get(`/api/get-todo-times-for-today?userId=${user.userId}`);
                 const { dataObj, errMsg } = response.data;
-
+    
                 if (errMsg) {
                     console.error("Error fetching todo times for today:", errMsg);
                     return;
                 }
-
-                if (JSON.stringify(dataObj) !== JSON.stringify(record)) {
-                    const recordObj = {
-                        date: dataObj.date,
-                        times: dataObj.timesArr
-                    };
-                    setRecord(recordObj);
-                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(recordObj));
-                }
-
+    
+                const recordObj = {
+                    date: dataObj.date || "",
+                    times: dataObj.timesArr || []
+                };
+    
+                setRecord(recordObj);
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(recordObj));
                 setTodoTimesFetched(true);
             } catch (error) {
                 errorHandler(error, false);
             }
-        }
-
-        if (compLoaded || fetchNotifications) {
+        };
+    
+        const isDateOutdated = record.date !== today.toISOString().split("T")[0];
+    
+        if ((fetchNotifications || isDateOutdated) || (compLoaded && !todoTimesFetched)) {
             todoTimesFetchedForToday();
             if (fetchNotifications) setFetchNotifications(false);
         }
-
-        todoTimesFetchedForToday();
-    }, [user, axiosSecure, record, fetchNotifications, setFetchNotifications, compLoaded]);
+    }, [user, axiosSecure, record.date, fetchNotifications, setFetchNotifications, compLoaded, today, todoTimesFetched]);
+    
 
     return (
         <div className='relative'>

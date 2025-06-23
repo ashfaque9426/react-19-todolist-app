@@ -21,7 +21,7 @@ function HomePage() {
                         <SelectDate selectedDate={selectedDate} setSelectedDate={setSelectedDate} title={title} />
 
                         {/* todolists component */}
-                        <TodoLists selectedDate={selectedDate} date={selectedDate} title={title} setTitle={setTitle} />
+                        <TodoLists selectedDate={selectedDate} title={title} setTitle={setTitle} />
                     </div>
                 </section>
             </div>

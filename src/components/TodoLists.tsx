@@ -7,7 +7,7 @@ import ShowErrMsg from "./ShowErrMsg";
 import ShowDataCards from "./ShowDataCards";
 import ShowDataLists from "./ShowDataLists";
 
-function TodoLists({ selectedDate, date, title, setTitle }: { selectedDate: string, date: string, title: string, setTitle: (title: string) => void }) {
+function TodoLists({ selectedDate, title, setTitle }: { selectedDate: string, title: string, setTitle: (title: string) => void }) {
   const { user } = useAuth();
   const [axiosSecure] = useAxiosSecure();
   const [loading, setLoading] = useState<boolean>(true);
@@ -16,35 +16,39 @@ function TodoLists({ selectedDate, date, title, setTitle }: { selectedDate: stri
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) return;
     const fetchData = async () => {
-      if(!selectedDate || !user.userId) {
+      if (!user || !axiosSecure || !selectedDate) {
         setLoading(false);
         return;
       }
-
+  
       setLoading(true);
       setErrorMsg(null);
+  
       try {
-        const { cardDataArr, errMsg } = (await axiosSecure.get(`/api/get-todo-lists-by-date?userId=${user.userId}&date=${selectedDate}`)).data;
-
+        const { cardDataArr, errMsg } = (
+          await axiosSecure.get(`/api/get-todo-lists-by-date?userId=${user.userId}&date=${selectedDate}`)
+        ).data;
+  
         if (errMsg) {
           setErrorMsg(errMsg);
-        }
-        else if (cardDataArr) {
-          setDataArr(cardDataArr);
-        }
+          return;
+        } 
+
+        setDataArr(cardDataArr);
       } catch (err) {
         const { setErrMsgStr } = errorHandler(err, true);
         setErrorMsg(setErrMsgStr);
       }
       setLoading(false);
     };
+  
     fetchData();
-  }, [axiosSecure, selectedDate, user, errorMsg]);
+  }, [axiosSecure, selectedDate, user]);
+  
 
   return (
-    <div className="relative">{loading ? <LoadingData /> : errorMsg ? <ShowErrMsg errMsg={errorMsg} /> : !showDataTable ? <ShowDataCards dataArray={dataArr} showTableDataSetter={setShowDataTable} setTitle={setTitle} /> : <ShowDataLists date={date} title={title} showTableDataSetter={setShowDataTable} setTitle={setTitle} />}</div>
+    <div className="relative">{loading ? <LoadingData /> : errorMsg ? <ShowErrMsg errMsg={errorMsg} /> : !showDataTable ? <ShowDataCards dataArray={dataArr} showTableDataSetter={setShowDataTable} setTitle={setTitle} /> : <ShowDataLists date={selectedDate} title={title} showTableDataSetter={setShowDataTable} setTitle={setTitle} />}</div>
   )
 }
 
