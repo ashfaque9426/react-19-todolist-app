@@ -17,6 +17,8 @@ const getInitialRecord = (): TimeRecord => {
         const parsedValue: TimeRecord = JSON.parse(stored);
         if (parsedValue.date !== "" && parsedValue.date !== new Date().toISOString().split('T')[0]) {
             localStorage.removeItem(LOCAL_STORAGE_KEY);
+            localStorage.removeItem(LOCAL_STORAGE_KEY_NOTIFICATIONS);
+            localStorage.removeItem(LOCAL_STORAGE_KEY_NOTIFY_COUNT);
             return { date: '', times: [] };
         }
         return parsedValue;
