@@ -96,6 +96,9 @@ function Notifications() {
     // Effect to check if the current date matches the record date and if so, wait for times to pass
     // and notify the user when each time has passed
     useEffect(() => {
+        // isCancelled flag inside useEffect to handle cancellation menually.
+        let isCancelled = false;
+
         // If the record date is not today, do nothing
         if (!(todoTimesFetched && record.date && record.date === new Date().toISOString().split("T")[0] && record.times.length > 0)) return;
     
@@ -110,8 +113,11 @@ function Notifications() {
         // This will wait for each time to pass before notifying the user
         const checkTimesSequentially = async () => {
             for (let i = 0; i < record.times.length; i++) {
+                if (isCancelled) return;
                 const time = record.times[i];
                 await waitUntilTimePassed(record.date, time); // wait until passed
+                if (isCancelled) return;
+
                 const notifyStr = `Your scheduled for time: ${time} has just passed. ${record.date}/${time}`;
 
                 // notify the user only if the notify string is not already in notifications state and update the notifications state and update localStorage for notifications and notification count
@@ -131,6 +137,10 @@ function Notifications() {
         };
     
         checkTimesSequentially();
+
+        return () => {
+            isCancelled = true; // Cancel any ongoing async logic
+        };
     }, [record, todoTimesFetched]);
     
     // Effect to fetch todo times for today from the server and update the record state
