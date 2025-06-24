@@ -15,7 +15,7 @@ const getInitialRecord = (): TimeRecord => {
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY) || "{ date: '', times: [] }";
     try {
         const parsedValue: TimeRecord = JSON.parse(stored);
-        if (parsedValue.date !== "" && parsedValue.date !== new Date().toISOString().split('T')[0]) {
+        if (parsedValue.date !== '' && parsedValue.date !== new Date().toISOString().split('T')[0]) {
             localStorage.removeItem(LOCAL_STORAGE_KEY);
             localStorage.removeItem(LOCAL_STORAGE_KEY_NOTIFICATIONS);
             localStorage.removeItem(LOCAL_STORAGE_KEY_NOTIFY_COUNT);
@@ -50,6 +50,7 @@ function Notifications() {
         setShowNotifications(!showNotifications);
     }
 
+    // timer to check for each minute to date change to update record realtime in later effect.
     useEffect(() => {
         const interval = setInterval(() => {
           const now = new Date();
@@ -65,13 +66,13 @@ function Notifications() {
       }, [today]);
 
     // Effect to set component loaded state when user is available and to fetch initial notifications and notification count from localStorage before connecting to the server
-    // This ensures that the component is ready to display notifications when the user is logged in
+    // This ensures that the component is ready to display notifications when the user is logged in and initial record data has been fetched from local storage.
     useEffect(() => {
         const storedNotifications = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
         const storedNotificationCount = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFY_COUNT) || '0');
         if (user && !compLoaded && Object.keys(record).length > 0) {
-            if (storedNotifications && storedNotifications.length > 0) setNotifications(storedNotifications);
-            if (storedNotificationCount > 0) setNotificationCount(storedNotificationCount);
+            setNotifications(storedNotifications);
+            setNotificationCount(storedNotificationCount);
             setCompLoaded(true);
         }
     }, [user, compLoaded, record]);
@@ -130,7 +131,7 @@ function Notifications() {
         };
     
         checkTimesSequentially();
-    }, [record, compLoaded, todoTimesFetched]);
+    }, [record, todoTimesFetched]);
     
     // Effect to fetch todo times for today from the server and update the record state
     // This will also update the localStorage with the new record
@@ -150,9 +151,18 @@ function Notifications() {
                     date: dataObj.date,
                     times: dataObj.timesArr
                 };
+
+                if (record.date !== recordObj.date) {
+                    setRecord(recordObj);
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(recordObj));
+                    localStorage.removeItem(LOCAL_STORAGE_KEY_NOTIFICATIONS);
+                    localStorage.removeItem(LOCAL_STORAGE_KEY_NOTIFY_COUNT);
+                    setNotifications([]);
+                    setNotificationCount(0);
+                } else if (JSON.stringify(record.times) !== JSON.stringify(recordObj.times)) {
+                    setRecord(recordObj);
+                }
     
-                setRecord(recordObj);
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(recordObj));
                 setTodoTimesFetched(true);
             } catch (error) {
                 errorHandler(error, false);
@@ -165,7 +175,7 @@ function Notifications() {
             todoTimesFetchedForToday();
             if (fetchNotifications) setFetchNotifications(false);
         }
-    }, [user, axiosSecure, record.date, fetchNotifications, setFetchNotifications, compLoaded, today, todoTimesFetched]);
+    }, [user, axiosSecure, record, fetchNotifications, setFetchNotifications, compLoaded, today, todoTimesFetched]);
     
 
     return (
