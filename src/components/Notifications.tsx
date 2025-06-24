@@ -147,8 +147,8 @@ function Notifications() {
                 }
     
                 const recordObj = {
-                    date: dataObj.date || "",
-                    times: dataObj.timesArr || []
+                    date: dataObj.date,
+                    times: dataObj.timesArr
                 };
     
                 setRecord(recordObj);
