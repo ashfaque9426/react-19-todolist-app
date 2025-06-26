@@ -13,13 +13,14 @@ function HomePage() {
     const { user, titleFromEdit, setTitleFromEdit } = useAuth();
 
     useEffect(() => {
+        setLoading(true);
         if (titleFromEdit) {
             setSelectedDate(new Date().toISOString().split("T")[0]);
             setTitle(titleFromEdit);
             setShowDataTable(true);
         }
         setLoading(false);
-    }, [titleFromEdit])
+    }, [titleFromEdit]);
 
     return (
         <div className={`h-[calc(100vh-48px)] w-full bg-no-repeat bg-cover bg-center relative 
