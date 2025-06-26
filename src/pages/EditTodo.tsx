@@ -2,7 +2,7 @@ import { useParams } from "react-router";
 import { FormState, RecordData } from "../services/dataTypes";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useEffect, useState } from "react";
-import { errorHandler, formatTimeTo12Hour, formatToDateInputValue, showToast } from "../services/utils";
+import { errorHandler, formatTimeTo12Hour, showToast } from "../services/utils";
 import TodoForm from "../components/TodoForm";
 import useAuth from "../hooks/useAuth";
 
@@ -11,7 +11,7 @@ function EditTodo() {
     const [axiosSecure] = useAxiosSecure();
     const { recordId } = useParams<{ recordId: string }>();
     const recordIdNumber = recordId ? parseInt(recordId, 10) : null;
-    const { setFetchNotifications } = useAuth();
+    const { setFetchNotifications, setRenderComp, setTitleFromEdit } = useAuth();
 
     useEffect(() => {
         const fetchTodoRecord = async () => {
@@ -45,14 +45,13 @@ function EditTodo() {
         try {
             const date = formData.get('date') as string;
             const time = formData.get('time') as string;
-            const convertedDate = formatToDateInputValue(date);
             const convertedTime = formatTimeTo12Hour(time);
             const title = formData.get('title') as string;
             const description = formData.get('description') as string;
             const status = formData.get('status') as string;
 
             const payload = {
-                date: convertedDate,
+                date,
                 title,
                 description,
                 time: convertedTime,
@@ -69,6 +68,8 @@ function EditTodo() {
             
             showToast(succMsg, 'success');
             setFetchNotifications(true);
+            setTitleFromEdit(title);
+            setRenderComp('render ShowDataLists comp');
             return { success: 'Form submitted successfully', error: '' };
         } catch (error) {
             const { setErrMsgStr } = errorHandler(error, true);

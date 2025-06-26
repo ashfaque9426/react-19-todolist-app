@@ -23,7 +23,11 @@ export interface AuthContextType {
   logout: (userEmail: string) => Promise<void>,
   registerUser: (registerCredentials: RegisterCredentials) => Promise<boolean>,
   refreshTokenHandler: () => Promise<boolean>,
-  scheduleTokenRefreshLoop: ScheduleTokenRefreshLoop
+  scheduleTokenRefreshLoop: ScheduleTokenRefreshLoop,
+  renderComp: string,
+  setRenderComp: (state: 'render ShowDataCards comp' | 'render ShowDataLists comp' | '') => void,
+  titleFromEdit: string,
+  setTitleFromEdit: (state: string) => void
 }
 
 // interface for error handler function

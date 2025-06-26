@@ -2,6 +2,8 @@ import React, { useActionState, useEffect, useState } from 'react';
 import { FormState, RecordData } from '../services/dataTypes';
 import { v4 as uuidv4 } from 'uuid';
 import { convertToDateInputValue, convertToTimeInputValue } from '../services/utils';
+import useAuth from '../hooks/useAuth';
+import { useNavigate } from 'react-router';
 
 type Props = {
     onSubmit: (
@@ -25,6 +27,10 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
         error: '',
     });
 
+    const { renderComp, setRenderComp } = useAuth();
+
+    const navigate = useNavigate();
+
     const handleTitleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedTitle(e.target.value);
     };
@@ -32,6 +38,14 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
     const handleShowTitleInput = () => {
         setShowTitleInput(true);
     }
+
+    // component render instructions based on render comp state
+    useEffect(() => {
+        if (renderComp === 'render ShowDataCards comp' || renderComp === 'render ShowDataLists comp') {
+            setRenderComp('');
+            setTimeout(() => navigate('/'), 3000);
+        }
+    }, [renderComp, setRenderComp, navigate]);
 
     // on edit mode it will fetch the todo record data according to the recordId
     useEffect(() => {

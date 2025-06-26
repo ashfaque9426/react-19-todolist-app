@@ -16,7 +16,7 @@ type TodoRecord = {
     UserID: string;
 };
 
-function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTableDataSetter: (show: boolean) => void, date: string, title: string, setTitle: (title: string) => void }) {
+function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEditSetter }: { showTableDataSetter: (show: boolean) => void, date: string, title: string, setTitle: (title: "") => void, titleFromEditSetter: (title: "") => void }) {
     const [recordDataArr, setRecordDataArr] = useState<TodoRecord[]>([]);
     const [isPending, setPending] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -48,6 +48,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
         setErrorMsg("");
         setRecordDataArr([]);
         setTitle("");
+        titleFromEditSetter("");
         showTableDataSetter(false);
     }
 
@@ -65,6 +66,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
             if (res.data.errMsg) {
                 showToast(res.data.errMsg, "error");
             } else {
+                showToast(res.data.succMsg, 'success');
                 setRecordDataArr(prev => prev.map(record => record.ID === recordId ? { ...record, Status: "completed" } : record));
             }
         } catch (err) {
@@ -82,6 +84,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
             if (res.data.errMsg) {
                 setErrorMsg(res.data.errMsg);
             } else {
+                showToast(res.data.succMsg, 'success');
                 setRecordDataArr(prev => prev.filter(record => record.ID !== recordId));
                 setFetchNotifications(true);
             }
@@ -120,8 +123,8 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle }: { showTab
                                                 <p><span className='font-semibold'>Status:</span><br /> {data.Status}</p>
                                             </div>
                                             <div className="flex flex-wrap gap-4">
-                                                <button onClick={() => navigate(`/edit-todo/${data.ID}`)} disabled={isPastDate(data.Date)} className='px-2 py-1 bg-black text-white cursor-pointer mt-3.5 rounded-lg disabled:text-gray-500 disabled:cursor-not-allowed'>Edit</button>
-                                                <button onClick={() => handleDelete(data.ID)} disabled={isPastDate(data.Date)} className='px-2 py-1 bg-red-500 text-white cursor-pointer mt-3.5 rounded-lg disabled:bg-red-300 disabled:text-gray-100 disabled:cursor-not-allowed'>{!isPending ? "Delete" : "Deleting..."}</button>
+                                                <button onClick={() => navigate(`/edit-todo/${data.ID}`)} disabled={isPastDate(data.Date) || isPending} className='px-2 py-1 bg-black text-white cursor-pointer mt-3.5 rounded-lg disabled:text-gray-500 disabled:cursor-not-allowed'>Edit</button>
+                                                <button onClick={() => handleDelete(data.ID)} disabled={isPastDate(data.Date) || isPending} className='px-2 py-1 bg-red-500 text-white cursor-pointer mt-3.5 rounded-lg disabled:bg-red-300 disabled:text-gray-100 disabled:cursor-not-allowed'>{!isPending ? "Delete" : "Deleting..."}</button>
                                             </div>
                                         </article>
                                     </li>

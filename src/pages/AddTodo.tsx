@@ -3,12 +3,12 @@ import TodoForm from "../components/TodoForm";
 import useAuth from "../hooks/useAuth";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { FormState } from "../services/dataTypes";
-import { errorHandler, formatTimeTo12Hour, formatToDateInputValue } from "../services/utils";
+import { errorHandler, formatTimeTo12Hour } from "../services/utils";
 
 function AddTodo() {
     const [arrOfTitles, setArrOfTitles] = useState<string[] | []>([]);
     // get user data from auth context
-    const { user, setFetchNotifications } = useAuth();
+    const { user, setFetchNotifications, setRenderComp } = useAuth();
     // get axios instance with secure headers from custom hook
     const [axiosSecure] = useAxiosSecure();
 
@@ -45,15 +45,13 @@ function AddTodo() {
         try {
             const date = formData.get('date') as string;
             const time = formData.get('time') as string;
-            const convertedDate = formatToDateInputValue(date);
             const convertedTime = formatTimeTo12Hour(time);
             const title = formData.get('title') as string;
             const description = formData.get('description') as string;
             const status = 'not completed';
 
             // Example logic, replace with your backend call
-            console.log({ date: convertedDate, time: convertedTime, title, description, status });
-            const payload = { date: convertedDate, time: convertedTime, title, description, status, userId: user?.userId };
+            const payload = { date, time: convertedTime, title, description, status, userId: user?.userId };
 
             // Make a POST request to add the todo record
             const response = await axiosSecure.post('/api/add-todo-record', payload);
@@ -66,6 +64,9 @@ function AddTodo() {
 
             // If the record is added successfully, update the setFetchNotification state to fetch notifications
             setFetchNotifications(true);
+
+            // which component to render set state
+            setRenderComp('render ShowDataCards comp');
 
             // return success message
             return { success: succMsg, error: '' };

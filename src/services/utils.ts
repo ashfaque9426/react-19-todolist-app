@@ -287,18 +287,6 @@ export function formatTimeTo12Hour(timeStr: string): string {
     return `${hours}:${minutes} ${period}`;
 }
 
-// Formats a date string to a format suitable for HTML date input fields (YYYY-MM-DD)
-export function formatToDateInputValue(dateStr: string): string {
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return "";
-
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
 // check if the time has passed or not
 export function hasDateTimePassed(dateStr: string, timeStr: string): boolean {
     // Parse the time into 24-hour format
