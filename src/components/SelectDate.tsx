@@ -3,25 +3,21 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { v4 as uuidv4 } from 'uuid';
 import { CiSquarePlus } from "react-icons/ci";
 import { useNavigate } from "react-router";
-import useAuth from "../hooks/useAuth";
 
-function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: string, setSelectedDate: (date: string) => void, title: string }) {
+function SelectDate({ userId, selectedDate, setSelectedDate, title }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string }) {
     const [dates, setDates] = useState<string[]>([]);
     const [err, setErr] = useState<string | null>(null);
     const [todoDatesFetched, setTodoDatesFetched] = useState(false);
     const navigate = useNavigate();
 
-    const { user } = useAuth();
-
     const [axiosSecure] = useAxiosSecure();
 
     useEffect(() => {
         const fetchDates = async () => {
-            if (!user || !axiosSecure) {
+            if (isNaN(userId) || !axiosSecure) {
                 return;
             }
 
-            const userId = user.userId;
             try {
                 const response = await axiosSecure.get(`/api/get-todo-dates?userId=${userId}`);
                 const { dateArr, errMsg } = response.data;
@@ -32,7 +28,7 @@ function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: st
                 }
 
                 setDates(dateArr);
-                if (dateArr.length > 0 && selectedDate !== dateArr[0]) {
+                if (dateArr.length > 0 && !selectedDate) {
                     setSelectedDate(dateArr[0]);
                 }
                 setTodoDatesFetched(true);
@@ -46,7 +42,7 @@ function SelectDate({ selectedDate, setSelectedDate, title }: { selectedDate: st
             fetchDates();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [axiosSecure, setSelectedDate, user, todoDatesFetched]);
+    }, [axiosSecure, setSelectedDate, userId, todoDatesFetched]);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
         setSelectedDate(event.target.value);
