@@ -44,6 +44,7 @@ function EmailVerificationAndPassUpdate() {
             setErr(true);
             setVerifyEmailMsgStatus('Invalid token. Unauthorized Access.');
             setLoading(false);
+            return;
         }
 
         const decoded = token ? decodeJwt(token) : undefined;
