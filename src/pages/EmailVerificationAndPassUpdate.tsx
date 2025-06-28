@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { updatePassBackendUrl, verifyEmailBackendUrl } from "../constants/constants";
 import axios from "axios";
@@ -16,12 +16,12 @@ function EmailVerificationAndPassUpdate() {
     const [formConfirmPassVisibility, setFormConfirmPassVisibility] = useState(false);
     const [pageHeading, setPageHeading] = useState("");
     const [verifyEmailMsgStatus, setVerifyEmailMsgStatus] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [newConfirmPass, setNewConfirmPass] = useState("");
     const [formSuccMsg, setFormSuccMsg] = useState("");
     const [formErrMsg, setFormErrMsg] = useState("");
     const { token } = useParams();
     const navigate = useNavigate();
+
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -30,7 +30,7 @@ function EmailVerificationAndPassUpdate() {
         const confirmPassword = form.confirmPassword;
 
         if (!password || !confirmPassword) return;
-        else if (newPassword !== newConfirmPass) {
+        else if (password !== confirmPassword) {
             setFormErrMsg("Password and confirm password do not match");
             return;
         }
@@ -81,7 +81,7 @@ function EmailVerificationAndPassUpdate() {
         }
 
         const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={}[\]:;"'|\\<>,.?/~`]).{8,}$/;
-        const isPasswordWeak = !passwordPattern.test(newPassword);
+        const isPasswordWeak = !inputRef.current || !passwordPattern.test(inputRef.current.value);
 
         if (apiReqToMake === "password update" && !formSubmitStatus) {
             setLoading(false);
@@ -99,7 +99,7 @@ function EmailVerificationAndPassUpdate() {
                 token: token
             };
 
-            if (password.length > 0) payload.newPassword = password;
+            if (password) payload.newPassword = password;
 
             try {
                 const response = await axios.patch(url, payload);
@@ -119,6 +119,7 @@ function EmailVerificationAndPassUpdate() {
                 if (apiReqToMake === "email verification") {
                     setVerifyEmailMsgStatus(succMsg + " You will be redirected to the login page soon.");
                 } else if (apiReqToMake === "password update") {
+                    setFormSubmitStatus(false);
                     setFormSuccMsg(succMsg + " You will be redirected to the login page soon.");
                 }
 
@@ -127,6 +128,7 @@ function EmailVerificationAndPassUpdate() {
                 const { setErrMsgStr } = errorHandler(err, true);
                 if(window.location.href.includes('/update-password')) {
                     setFormErrMsg(setErrMsgStr);
+                    setFormSubmitStatus(false);
                     setLoading(false);
                     return;
                 }
@@ -136,12 +138,13 @@ function EmailVerificationAndPassUpdate() {
             }
         }
 
+        const password = inputRef.current ? inputRef.current.value : "";
+
         if (apiUrl.length > 0) {
-            apiRequest(apiUrl, newPassword);
+            apiRequest(apiUrl, password);
         }
 
         setLoading(false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, tokenAvailable, navigate, formSubmitStatus]);
     return (
         <>
@@ -161,22 +164,22 @@ function EmailVerificationAndPassUpdate() {
 
             {
                 (!loading && pageHeading === "password update") && <form onSubmit={handleSubmit}>
-                    <fieldset className="flex flex-col gap-5 border rounded-md shadow-md px-5 py-7">
-                        <legend className="font-bold text-2xl text-center mb-7">Update Password</legend>
-                        <div className="flex flex-col relative">
+                    <fieldset className="flex flex-col gap-5 border rounded-md shadow-md p-5">
+                        <legend className="font-bold text-2xl text-center ml-2.5 mb-7">Update Password</legend>
+                        <div className="flex flex-col gap-3 relative">
                             <label className="font-semibold text-lg" htmlFor="password">Password</label>
-                            <input className="px-1.5 py-1 border rounded-md focus:outline-0" type={formPassVisibility ? "text" : "password"} name="password" id="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
-                            <span className="absolute right-0 top-1/2 -translate-y-1/2 text-xl" onClick={() => setFormPassVisibility(!formPassVisibility)}>
+                            <input ref={inputRef} className="px-1.5 py-1 border rounded-md focus:outline-0" type={formPassVisibility ? "text" : "password"} name="password" id="password" />
+                            <span className="absolute right-0 top-2/3 text-xl" onClick={() => setFormPassVisibility(!formPassVisibility)}>
                                 {
                                     formPassVisibility ? <IoEyeOffOutline /> : <IoEyeOutline />
                                 }
                             </span>
                         </div>
 
-                        <div className="flex flex-col relative">
+                        <div className="flex flex-col gap-3 relative">
                             <label className="font-semibold text-lg" htmlFor="confirmPassword">Confirm Password</label>
-                            <input className="px-1.5 py-1 border rounded-md focus:outline-0" type={formConfirmPassVisibility ? "text" : "password"} name="confirmPassword" id="confirmPassword" value={newConfirmPass} onChange={e => setNewConfirmPass(e.target.value)} />
-                            <span className="absolute right-0 top-1/2 -translate-y-1/2 text-xl" onClick={() => setFormConfirmPassVisibility(!formPassVisibility)}>
+                            <input className="px-1.5 py-1 border rounded-md focus:outline-0" type={formConfirmPassVisibility ? "text" : "password"} name="confirmPassword" id="confirmPassword" />
+                            <span className="absolute right-0 top-2/3 text-xl" onClick={() => setFormConfirmPassVisibility(!formPassVisibility)}>
                                 {
                                     formConfirmPassVisibility ? <IoEyeOffOutline /> : <IoEyeOutline />
                                 }
@@ -190,7 +193,7 @@ function EmailVerificationAndPassUpdate() {
                                 (formSuccMsg || formErrMsg) && (
                                     <>
                                         <h2 className="text-2xl font-bold my-5">Form Submission Status</h2>
-                                        {formErrMsg && <p className="text-green-500">{formErrMsg}</p>}
+                                        {formSuccMsg && <p className="text-green-500">{formSuccMsg}</p>}
                                         {formErrMsg && <p className="text-red-500">{formErrMsg}</p>}
                                     </>
                                 )
