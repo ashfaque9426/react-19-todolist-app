@@ -5,6 +5,7 @@ import axios from "axios";
 import LoadingData from "../components/LoadingData";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { errorHandler } from "../services/utils";
+import { decodeJwt } from "jose"
 
 function EmailVerificationAndPassUpdate() {
     const [tokenAvailable, setTokenAvailable] = useState(false);
@@ -37,14 +38,30 @@ function EmailVerificationAndPassUpdate() {
     };
 
     useEffect(() => {
-        if (window.location.href.includes('/verify-email')) setPageHeading("Email Verification Status");
-        else if (window.location.href.includes('/update-password')) setPageHeading("Please enter your new password bellow");
+        let errStr = "";
 
-        if (token && /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/.test(token)) {
-            setTokenAvailable(true);
-        } else if (!token || !/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/.test(token)) {
+        if (!token || !/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/.test(token)) {
             setErr(true);
-            setVerifyEmailMsgStatus(`Invalid token. Unauthorized Access.`);
+            setVerifyEmailMsgStatus('Invalid token. Unauthorized Access.');
+            setLoading(false);
+        }
+
+        const decoded = token ? decodeJwt(token) : undefined;
+        const isExpired = decoded?.exp ? Date.now() >= decoded.exp * 1000 : false;
+
+        if (window.location.href.includes('/verify-email')) {
+            setPageHeading("Email Verification Status");
+            errStr = "Please request a new verification email for email verification."
+        } else if (window.location.href.includes('/update-password')) {
+            setPageHeading("Please enter you new password bellow");
+            errStr = "Please request a new update password email."
+        }
+
+        if (!isExpired) {
+            setTokenAvailable(true);
+        } else {
+            setErr(true);
+            setVerifyEmailMsgStatus(`Your token has been expired. ${errStr} `);
             setLoading(false);
         }
     }, [token]);
