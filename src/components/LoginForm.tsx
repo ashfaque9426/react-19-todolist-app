@@ -3,6 +3,9 @@ import FormBtn from "./FormBtn";
 import { useActionState, useState } from "react";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import useAuth from "../hooks/useAuth";
+import { errorHandler, showToast } from "../services/utils";
+import axios from "axios";
+import { apiUrl } from "../constants/constants";
 
 function LoginForm() {
   const [emailInputValue, setEmailInputValue] = useState("");
@@ -34,6 +37,28 @@ function LoginForm() {
     }
   }
 
+  const handleForgotPassword = async () => {
+    if (!emailInputValue) {
+      showToast("Type your email on Email input field and then click on forgot password.", "warning");
+      return;
+    }
+    
+    try {
+      const response = await axios.post(`${apiUrl}/api/forgot-password`, { userEmail: emailInputValue });
+      const { succMsg, errMsg } = response.data;
+
+      if (errMsg) {
+        showToast(errMsg, "error");
+        return;
+      }
+      
+      showToast(succMsg, "success");
+    } catch (err) {
+      const { setErrMsgStr } = errorHandler(err, true);
+      showToast(setErrMsgStr, 'error');
+    }
+  }
+
   const [state, formAction] = useActionState(handleFormSubmission, { success: "", error: "" });
   const { success, error } = state;
 
@@ -62,7 +87,7 @@ function LoginForm() {
 
             <div className="flex justify-between items-center">
               <Link className="hover:underline cursor-pointer" to="/register">Don&apos;t have an Account yet?</Link>
-              <button className="hover:underline cursor-pointer">Forgot Password?</button>
+              <button onClick={handleForgotPassword} className="hover:underline cursor-pointer">Forgot Password?</button>
             </div>
           </div>
 

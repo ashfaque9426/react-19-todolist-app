@@ -5,10 +5,9 @@ import ProtectedRoute from './ProtectedRoute';
 import Registration from "../pages/Registration";
 import HomePage from "../pages/HomePage";
 import About from "../pages/About";
-import UpdatePassword from "../pages/UpdatePassword";
 import AddTodo from "../pages/AddTodo";
 import EditTodo from "../pages/EditTodo";
-import EmailValidationConfirm from "../pages/EmailValidationConfirm";
+import EmailVerificationAndPassUpdate from "../pages/EmailVerificationAndPassUpdate";
 
 const router = createBrowserRouter([
   {
@@ -39,12 +38,12 @@ const router = createBrowserRouter([
             Component: Registration
           },
           {
-            path: 'update-password',
-            Component: UpdatePassword
+            path: 'update-password/:token',
+            Component: EmailVerificationAndPassUpdate
           },
           {
-            path: 'verify-email',
-            Component: EmailValidationConfirm
+            path: 'verify-email/:token',
+            Component: EmailVerificationAndPassUpdate
           }
         ]
       },

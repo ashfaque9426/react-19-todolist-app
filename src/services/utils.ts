@@ -1,3 +1,4 @@
+import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
 
@@ -74,7 +75,7 @@ export const updatePassword = async (previousState: unknown, formData: FormData)
 
         // Send the password update request to the server
 
-        const response = await fetch(`${import.meta.env.REACT_APP_API_URL}/api/update-password`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/update-password`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -203,32 +204,33 @@ export const showToast = (message: string, type: "success" | "error" | "info" | 
     });
 }
 
-export const errorHandler = (err: unknown, errSetter: boolean): { setErrMsgStr: string } => {
-    let errMsgStr = "";
-    if (err && typeof err === "object" && "response" in err) {
-        const axiosError = err as { response: { data: { dataArr?: null; errMsg?: string } } };
-        // The request was made, and the server responded with a status code outside the 2xx range
-        const { errMsg } = axiosError.response.data;
-        errMsgStr = errMsg || "An error occurred while processing your request.";
-    } else if (err && typeof err === "object" && "request" in err) {
-        // The request was made, but no response was received
-        const requestVal = (err as { request?: unknown }).request;
-        errMsgStr = typeof requestVal === "string" ? requestVal : requestVal ? JSON.stringify(requestVal) : "An error occurred while processing your request.";
+export const errorHandler = (
+    err: unknown,
+    errSetter: boolean
+): { setErrMsgStr: string } => {
+    let errMsgStr = "An error occurred while processing your request.";
+
+    if (axios.isAxiosError(err)) {
+        const serverMsg =
+            err.response?.data?.errMsg || // your API might return this
+            err.response?.data?.message || // common convention
+            err.message;
+
+        errMsgStr = serverMsg || errMsgStr;
     } else if (err instanceof Error) {
-        // Something happened in setting up the request
-        errMsgStr = err.message || "An error occurred while processing your request.";
+        // Any other JS error
+        errMsgStr = err.message || errMsgStr;
     } else {
-        console.error('An unknown error occurred.');
+        console.error("An unknown error occurred:", err);
     }
 
     if (errSetter) {
-        errMsgStr = errMsgStr || "An error occurred while processing your request.";
         return { setErrMsgStr: errMsgStr };
     } else {
         console.error(errMsgStr);
         return { setErrMsgStr: "" };
     }
-}
+};
 
 export function isPastDate(dateString: string): boolean {
     const inputDate = new Date(dateString);
