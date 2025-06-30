@@ -10,7 +10,7 @@ function HomePage() {
     const [title, setTitle] = useState("");
     const [loading, setLoading] = useState(true);
     const [showDataTable, setShowDataTable] = useState<boolean>(false);
-    const { user, titleFromEdit, setTitleFromEdit } = useAuth();
+    const { user, titleFromEdit, setTitleFromEdit, fetchNotifications, setFetchNotifications, dateFromEdit, setDateFromEdit } = useAuth();
 
     useEffect(() => {
         setLoading(true);
@@ -36,7 +36,7 @@ function HomePage() {
                         <section className='relative my-5 w-full md:w-2/3 2xl:w-1/2 mx-auto z-10' role='region' aria-labelledby='todo-list-section'>
                             <div className="px-5">
                                 {/* Select date component */}
-                                <SelectDate userId={user.userId} selectedDate={selectedDate} setSelectedDate={setSelectedDate} title={title} />
+                                <SelectDate userId={user.userId} selectedDate={selectedDate} setSelectedDate={setSelectedDate} title={title} fetchNotifications={fetchNotifications} setFetchNotifications={setFetchNotifications} dateFromEdit={dateFromEdit} setDateFromEdit={setDateFromEdit}  />
 
                                 {/* todolists component */}
                                 <TodoLists userId={user.userId} selectedDate={selectedDate} title={title} setTitle={setTitle} showDataTable={showDataTable} setShowDataTable={setShowDataTable} setTitleFromEdit={setTitleFromEdit} />

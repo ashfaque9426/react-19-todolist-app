@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CiSquarePlus } from "react-icons/ci";
 import { useNavigate } from "react-router";
 
-function SelectDate({ userId, selectedDate, setSelectedDate, title }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string }) {
+function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchNotifications, setFetchNotifications, dateFromEdit, setDateFromEdit }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string, fetchNotifications: boolean, setFetchNotifications: (state: boolean) => void, dateFromEdit: string, setDateFromEdit: (state: string) => void }) {
     const [dates, setDates] = useState<string[]>([]);
     const [err, setErr] = useState<string | null>(null);
     const [todoDatesFetched, setTodoDatesFetched] = useState(false);
@@ -27,22 +27,29 @@ function SelectDate({ userId, selectedDate, setSelectedDate, title }: { userId: 
                     return;
                 }
 
-                setDates(dateArr);
+                if (dateArr.length !== dates.length || !dateArr.every((d: string, i: number) => d === dates[i])) {
+                    setDates(dateArr);
+                }
+
                 if (dateArr.length > 0 && !selectedDate) {
                     setSelectedDate(dateArr[0]);
                 }
+
                 setTodoDatesFetched(true);
+                setFetchNotifications(false);
+                setDateFromEdit("");
             } catch (error) {
                 console.error("Error fetching todo dates: ", error);
                 setErr("Failed to fetch todo dates.");
             }
         }
 
-        if(!todoDatesFetched) {
+        if((dateFromEdit && fetchNotifications) || !todoDatesFetched) {
             fetchDates();
         }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [axiosSecure, setSelectedDate, userId, todoDatesFetched]);
+    }, [axiosSecure, userId, todoDatesFetched, fetchNotifications, dateFromEdit, setSelectedDate, setFetchNotifications, setDateFromEdit]);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
         setSelectedDate(event.target.value);

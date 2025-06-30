@@ -8,7 +8,7 @@ import { errorHandler, formatTimeTo12Hour } from "../services/utils";
 function AddTodo() {
     const [arrOfTitles, setArrOfTitles] = useState<string[] | []>([]);
     // get user data from auth context
-    const { user, setFetchNotifications, setRenderComp } = useAuth();
+    const { user, setFetchNotifications, setRenderComp, setDateFromEdit } = useAuth();
     // get axios instance with secure headers from custom hook
     const [axiosSecure] = useAxiosSecure();
 
@@ -64,6 +64,9 @@ function AddTodo() {
 
             // If the record is added successfully, update the setFetchNotification state to fetch notifications
             setFetchNotifications(true);
+
+            // setting date on auth provider component to trigger select date component's effect to fetch dates
+            setDateFromEdit(date);
 
             // which component to render set state
             setRenderComp('render ShowDataCards comp');

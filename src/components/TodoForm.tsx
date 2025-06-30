@@ -27,7 +27,7 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
         error: '',
     });
 
-    const { renderComp, setRenderComp } = useAuth();
+    const { renderComp, setRenderComp, setDateFromEdit, setTimeFromEdit } = useAuth();
 
     const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
     useEffect(() => {
         if (renderComp === 'render ShowDataCards comp' || renderComp === 'render ShowDataLists comp') {
             setRenderComp('');
-            setTimeout(() => navigate('/'), 3000);
+            setTimeout(() => navigate('/'), 1500);
         }
     }, [renderComp, setRenderComp, navigate]);
 
@@ -53,11 +53,13 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
             const date = convertToDateInputValue(recordData.todo_date);
             const time = convertToTimeInputValue(recordData.todo_time);
             setDate(date);
+            setDateFromEdit(date);
             setTime(time);
+            setTimeFromEdit(time);
             setTitle(recordData.todo_title);
             setDescription(recordData.todo_description);
         }
-    }, [editTodo, recordData]);
+    }, [editTodo, recordData, setDateFromEdit, setTimeFromEdit]);
 
     return (
         <form action={formAction} className="max-w-md mx-auto p-6 bg-[#ccbcbc] rounded-2xl shadow-lg space-y-6">

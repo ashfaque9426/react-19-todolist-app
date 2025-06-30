@@ -87,7 +87,7 @@ function LoginForm() {
 
             <div className="flex justify-between items-center">
               <Link className="hover:underline cursor-pointer" to="/register">Don&apos;t have an Account yet?</Link>
-              <button onClick={handleForgotPassword} className="hover:underline cursor-pointer">Forgot Password?</button>
+              <span onClick={handleForgotPassword} className="hover:underline cursor-pointer">Forgot Password?</span>
             </div>
           </div>
 

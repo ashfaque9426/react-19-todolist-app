@@ -11,7 +11,7 @@ function EditTodo() {
     const [axiosSecure] = useAxiosSecure();
     const { recordId } = useParams<{ recordId: string }>();
     const recordIdNumber = recordId ? parseInt(recordId, 10) : null;
-    const { setFetchNotifications, setRenderComp, setTitleFromEdit } = useAuth();
+    const { setFetchNotifications, setRenderComp, setTitleFromEdit, dateFromEdit, timeFromEdit, setTimeFromEdit } = useAuth();
 
     useEffect(() => {
         const fetchTodoRecord = async () => {
@@ -67,7 +67,8 @@ function EditTodo() {
             }
             
             showToast(succMsg, 'success');
-            setFetchNotifications(true);
+            if(dateFromEdit !== date || timeFromEdit !== convertedTime) setFetchNotifications(true);
+            setTimeFromEdit("");
             setTitleFromEdit(title);
             setRenderComp('render ShowDataLists comp');
             return { success: 'Form submitted successfully', error: '' };
