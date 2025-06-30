@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CiSquarePlus } from "react-icons/ci";
 import { useNavigate } from "react-router";
 
-function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchNotifications, setFetchNotifications, dateFromEdit, setDateFromEdit }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string, fetchNotifications: boolean, setFetchNotifications: (state: boolean) => void, dateFromEdit: string, setDateFromEdit: (state: string) => void }) {
+function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchDates, setFetchDates, dateFromEdit, setDateFromEdit }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string, fetchDates: boolean, setFetchDates: (state: boolean) => void, dateFromEdit: string, setDateFromEdit: (state: string) => void }) {
     const [dates, setDates] = useState<string[]>([]);
     const [err, setErr] = useState<string | null>(null);
     const [todoDatesFetched, setTodoDatesFetched] = useState(false);
@@ -13,7 +13,7 @@ function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchNotific
     const [axiosSecure] = useAxiosSecure();
 
     useEffect(() => {
-        const fetchDates = async () => {
+        const fetchTodoDates = async () => {
             if (isNaN(userId) || !axiosSecure) {
                 return;
             }
@@ -36,7 +36,7 @@ function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchNotific
                 }
 
                 setTodoDatesFetched(true);
-                setFetchNotifications(false);
+                setFetchDates(false);
                 setDateFromEdit("");
             } catch (error) {
                 console.error("Error fetching todo dates: ", error);
@@ -44,12 +44,12 @@ function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchNotific
             }
         }
 
-        if((dateFromEdit && fetchNotifications) || !todoDatesFetched) {
-            fetchDates();
+        if((todoDatesFetched && fetchDates && dateFromEdit && !dates.includes(dateFromEdit)) || !todoDatesFetched) {
+            fetchTodoDates();
         }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [axiosSecure, userId, todoDatesFetched, fetchNotifications, dateFromEdit, setSelectedDate, setFetchNotifications, setDateFromEdit]);
+    }, [axiosSecure, userId, todoDatesFetched, fetchDates, dateFromEdit, setSelectedDate, setFetchDates, setDateFromEdit]);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
         setSelectedDate(event.target.value);

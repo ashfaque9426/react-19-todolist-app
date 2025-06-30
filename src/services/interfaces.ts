@@ -31,7 +31,9 @@ export interface AuthContextType {
   dateFromEdit: string,
   setDateFromEdit: (state: string) => void,
   timeFromEdit: string,
-  setTimeFromEdit: (state: string) => void
+  setTimeFromEdit: (state: string) => void,
+  fetchDates: boolean,
+  setFetchDates: (state: boolean) => void
 }
 
 // interface for error handler function

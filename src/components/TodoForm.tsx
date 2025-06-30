@@ -1,7 +1,7 @@
 import React, { useActionState, useEffect, useState } from 'react';
 import { FormState, RecordData } from '../services/dataTypes';
 import { v4 as uuidv4 } from 'uuid';
-import { convertToDateInputValue, convertToTimeInputValue } from '../services/utils';
+import { convertToTimeInputValue } from '../services/utils';
 import useAuth from '../hooks/useAuth';
 import { useNavigate } from 'react-router';
 
@@ -50,12 +50,12 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
     // on edit mode it will fetch the todo record data according to the recordId
     useEffect(() => {
         if (editTodo && recordData) {
-            const date = convertToDateInputValue(recordData.todo_date);
+            const date = recordData.todo_date;
             const time = convertToTimeInputValue(recordData.todo_time);
             setDate(date);
             setDateFromEdit(date);
             setTime(time);
-            setTimeFromEdit(time);
+            setTimeFromEdit(recordData.todo_time);
             setTitle(recordData.todo_title);
             setDescription(recordData.todo_description);
         }

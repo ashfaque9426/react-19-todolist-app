@@ -2,7 +2,7 @@ import { useParams } from "react-router";
 import { FormState, RecordData } from "../services/dataTypes";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useEffect, useState } from "react";
-import { errorHandler, formatTimeTo12Hour, showToast } from "../services/utils";
+import { errorHandler, formatTimeTo12Hour, isPastDate, showToast } from "../services/utils";
 import TodoForm from "../components/TodoForm";
 import useAuth from "../hooks/useAuth";
 
@@ -11,7 +11,7 @@ function EditTodo() {
     const [axiosSecure] = useAxiosSecure();
     const { recordId } = useParams<{ recordId: string }>();
     const recordIdNumber = recordId ? parseInt(recordId, 10) : null;
-    const { setFetchNotifications, setRenderComp, setTitleFromEdit, dateFromEdit, timeFromEdit, setTimeFromEdit } = useAuth();
+    const { setFetchNotifications, setRenderComp, setTitleFromEdit, dateFromEdit, timeFromEdit, setTimeFromEdit, setFetchDates } = useAuth();
 
     useEffect(() => {
         const fetchTodoRecord = async () => {
@@ -59,6 +59,10 @@ function EditTodo() {
                 recordId: recordIdNumber
             };
 
+            if(isPastDate(date)) {
+                return { success: '', error: 'The date is you trying to add after edit is past date.' };
+            }
+
             const response = await axiosSecure.patch('/api/modify-todo-record', payload);
             const { succMsg, errMsg } = response.data;
 
@@ -67,7 +71,8 @@ function EditTodo() {
             }
             
             showToast(succMsg, 'success');
-            if(dateFromEdit !== date || timeFromEdit !== convertedTime) setFetchNotifications(true);
+            if(dateFromEdit !== date) setFetchDates(true);
+            if(timeFromEdit !== convertedTime) setFetchNotifications(true);
             setTimeFromEdit("");
             setTitleFromEdit(title);
             setRenderComp('render ShowDataLists comp');
