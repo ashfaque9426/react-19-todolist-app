@@ -11,11 +11,15 @@ function EditTodo() {
     const [axiosSecure] = useAxiosSecure();
     const { recordId } = useParams<{ recordId: string }>();
     const recordIdNumber = recordId ? parseInt(recordId, 10) : null;
-    const { setFetchNotifications, setRenderComp, setTitleFromEdit, dateFromEdit, timeFromEdit, setTimeFromEdit, setFetchDates } = useAuth();
+    const { setFetchNotifications, setRenderComp, setTitleFromEdit, timeFromEdit, setTimeFromEdit } = useAuth();
 
     useEffect(() => {
         const fetchTodoRecord = async () => {
-            if (!axiosSecure || !recordId) return;
+            if (!recordId || !axiosSecure) {
+                const warningMsg = !recordId ? "Record Id is required to edit existing todo record" : "User is not logged in. Unauthorized Access."
+                showToast(warningMsg, "warning");
+                return;
+            }
             try {
                 const response = await axiosSecure.get(`api/get-todo-record?recordId=${recordId}`);
                 const { recordData, errMsg } = response.data;
@@ -71,7 +75,7 @@ function EditTodo() {
             }
             
             showToast(succMsg, 'success');
-            if(dateFromEdit !== date) setFetchDates(true);
+
             if(timeFromEdit !== convertedTime) setFetchNotifications(true);
             setTimeFromEdit("");
             setTitleFromEdit(title);

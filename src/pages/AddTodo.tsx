@@ -8,7 +8,7 @@ import { errorHandler, formatTimeTo12Hour } from "../services/utils";
 function AddTodo() {
     const [arrOfTitles, setArrOfTitles] = useState<string[] | []>([]);
     // get user data from auth context
-    const { user, setFetchNotifications, setRenderComp, setDateFromEdit, setFetchDates } = useAuth();
+    const { user, setFetchNotifications, setRenderComp } = useAuth();
     // get axios instance with secure headers from custom hook
     const [axiosSecure] = useAxiosSecure();
 
@@ -51,7 +51,7 @@ function AddTodo() {
             const status = 'not completed';
 
             // Example logic, replace with your backend call
-            const payload = { date, time: convertedTime, title, description, status, userId: user?.userId };
+            const payload = { date, time: convertedTime, title, description, status, userId: user.userId };
 
             // Make a POST request to add the todo record
             const response = await axiosSecure.post('/api/add-todo-record', payload);
@@ -64,12 +64,6 @@ function AddTodo() {
 
             // If the record is added successfully, update the setFetchNotification state to fetch notifications from AuthProvider
             setFetchNotifications(true);
-
-            // setting date on auth provider component to check if date is already existed on SelectDate component's dates state array.
-            setDateFromEdit(date);
-
-            // then update the fetchDates state from AuthProvider
-            setFetchDates(true);
 
             // which component to render set state
             setRenderComp('render ShowDataCards comp');

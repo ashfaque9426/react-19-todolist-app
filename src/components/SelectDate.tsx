@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CiSquarePlus } from "react-icons/ci";
 import { useNavigate } from "react-router";
 
-function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchDates, setFetchDates, dateFromEdit, setDateFromEdit }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string, fetchDates: boolean, setFetchDates: (state: boolean) => void, dateFromEdit: string, setDateFromEdit: (state: string) => void }) {
+function SelectDate({ userId, selectedDate, setSelectedDate, title, setFetchDates }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string, fetchDates: boolean, setFetchDates: (state: boolean) => void }) {
     const [dates, setDates] = useState<string[]>([]);
     const [err, setErr] = useState<string | null>(null);
     const [todoDatesFetched, setTodoDatesFetched] = useState(false);
@@ -37,19 +37,18 @@ function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchDates, 
 
                 setTodoDatesFetched(true);
                 setFetchDates(false);
-                setDateFromEdit("");
             } catch (error) {
                 console.error("Error fetching todo dates: ", error);
                 setErr("Failed to fetch todo dates.");
             }
         }
 
-        if((todoDatesFetched && fetchDates && dateFromEdit && !dates.includes(dateFromEdit)) || !todoDatesFetched) {
+        if(!todoDatesFetched) {
             fetchTodoDates();
         }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [axiosSecure, userId, todoDatesFetched, fetchDates, dateFromEdit, setSelectedDate, setFetchDates, setDateFromEdit]);
+    }, [axiosSecure, userId, todoDatesFetched, setSelectedDate, setFetchDates]);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
         setSelectedDate(event.target.value);

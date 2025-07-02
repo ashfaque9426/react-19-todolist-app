@@ -14,7 +14,6 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [renderComp, setRenderComp] = useState("");
   const [titleFromEdit, setTitleFromEdit] = useState("");
-  const [dateFromEdit, setDateFromEdit] = useState("");
   const [timeFromEdit, setTimeFromEdit] = useState("");
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
@@ -290,7 +289,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, fetchNotifications, setIsUserAvailable, setFetchNotifications, login, registerUser, logout, refreshTokenHandler, scheduleTokenRefreshLoop, renderComp, setRenderComp, titleFromEdit, setTitleFromEdit, dateFromEdit, setDateFromEdit, timeFromEdit, setTimeFromEdit, fetchDates, setFetchDates }}>{children}</AuthContext>
+    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, fetchNotifications, setIsUserAvailable, setFetchNotifications, login, registerUser, logout, refreshTokenHandler, scheduleTokenRefreshLoop, renderComp, setRenderComp, titleFromEdit, setTitleFromEdit, timeFromEdit, setTimeFromEdit, fetchDates, setFetchDates }}>{children}</AuthContext>
   )
 }
 

@@ -28,8 +28,6 @@ export interface AuthContextType {
   setRenderComp: (state: 'render ShowDataCards comp' | 'render ShowDataLists comp' | '') => void,
   titleFromEdit: string,
   setTitleFromEdit: (state: string) => void,
-  dateFromEdit: string,
-  setDateFromEdit: (state: string) => void,
   timeFromEdit: string,
   setTimeFromEdit: (state: string) => void,
   fetchDates: boolean,
