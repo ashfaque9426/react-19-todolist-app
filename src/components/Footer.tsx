@@ -1,9 +1,27 @@
 import { NavLink } from 'react-router';
 import logo from '../assets/images/logo/todos-logo.webp';
-import { FaGithubSquare, FaLinkedin  } from "react-icons/fa";
+import { FaGithubSquare, FaLinkedin } from "react-icons/fa";
+import { useEffect, useRef } from 'react';
+import useAuth from '../hooks/useAuth';
 function Footer() {
+  const { setFooterHeight } = useAuth();
+  const footerRef = useRef<HTMLElement | null>(null);
+  
+  useEffect(() => {
+    const calcAndSetFooterH = () => {
+      if (footerRef.current) setFooterHeight(footerRef.current.offsetHeight);
+    }
+
+    calcAndSetFooterH();
+
+    window.addEventListener("resize", calcAndSetFooterH);
+
+    return () => {
+      window.removeEventListener("resize", calcAndSetFooterH);
+    };
+  }, [setFooterHeight]);
   return (
-    <footer className='p-12 md:w-2/3 md:mx-auto flex flex-col gap-7 md:gap-0 items-center md:items-start md:flex-row md:justify-between' role="contentinfo">
+    <footer ref={footerRef} className='px-5 py-12 xl:w-2/3 md:mx-auto flex flex-col gap-7 md:gap-0 items-center md:items-start md:flex-row md:justify-between' role="contentinfo">
       <figure>
         <img className='w-48' src={logo} alt="Footer logo" />
       </figure>

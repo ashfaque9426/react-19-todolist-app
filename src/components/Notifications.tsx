@@ -196,7 +196,7 @@ function Notifications() {
             </div>
 
             {
-                showNotifications && <div className='md:absolute md:top-12 md:w-40 md:-left-12 bg-white p-4 rounded-lg shadow-lg z-10'>
+                showNotifications && <div className='absolute top-12 w-40 -left-12 bg-white p-4 rounded-lg shadow-lg z-10'>
                     {
                         notifications.length > 0 ? (
                             <ul className=" mt-2">

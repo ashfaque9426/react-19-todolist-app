@@ -31,7 +31,15 @@ export interface AuthContextType {
   timeFromEdit: string,
   setTimeFromEdit: (state: string) => void,
   fetchDates: boolean,
-  setFetchDates: (state: boolean) => void
+  setFetchDates: (state: boolean) => void,
+  navHeight: number,
+  setNavHeight: (height: number) => void,
+  footerHeight: number,
+  setFooterHeight: (height: number) => void,
+  elemCount: number,
+  setElemCount: (count: number) => void,
+  compHeight: string,
+  setCompHeight: (heightVal: string) => void
 }
 
 // interface for error handler function

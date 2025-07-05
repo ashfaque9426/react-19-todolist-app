@@ -4,17 +4,42 @@ import NavigateButton from "./NavigateButton";
 import cn from "../lib/clsx";
 import Notifications from "./Notifications";
 import logo from '../assets/images/logo/todos-logo-nav.png';
+import { GiHamburgerMenu } from "react-icons/gi";
+import { useEffect, useRef, useState } from "react";
 
 function NavigationBar() {
-  const { isUserAvailable, userLoading, user, logout } = useAuth();
+  const { isUserAvailable, userLoading, user, logout, setNavHeight } = useAuth();
+  const [navOptVisibility, setNavOptVisibility] = useState(false);
+  const navRef = useRef<HTMLElement | null>(null);
+
+  const handleNavOptVisibility = () => {
+    setNavOptVisibility(!navOptVisibility);
+    if (navRef.current) setNavHeight(navRef.current.offsetHeight);
+  }
+
+  useEffect(() => {
+    const calcAndSetNavHeight = () => {
+      if (navRef.current) setNavHeight(navRef.current.offsetHeight);
+    }
+
+    calcAndSetNavHeight();
+
+    window.addEventListener("resize", calcAndSetNavHeight);
+
+    return () => {
+      window.removeEventListener("resize", calcAndSetNavHeight);
+    };
+  }, [setNavHeight]);
 
   return (
-    <nav className="lg:w-2/3 lg:mx-auto flex flex-col md:flex-row justify-between items-center px-5 py-3" role="navigation">
+    <nav ref={navRef} className="relative xl:w-2/3 lg:mx-auto flex flex-col md:flex-row justify-between items-center p-5 md:py-3" role="navigation">
+      <span onClick={handleNavOptVisibility} className="absolute md:hidden top-7 right-5 text-3xl" ><GiHamburgerMenu /></span>
+
       <section role="region" aria-label="Logo">
         <NavLink to="/" ><img className="w-32" src={logo} alt="Logo" /></NavLink>
       </section>
 
-      <ul className="flex flex-col md:flex-row items-center gap-4 mt-5 md:mt-0" role="menubar">
+      <ul className={`${navOptVisibility ? "flex" : "hidden"} md:flex flex-col md:flex-row items-center gap-4 mt-5 md:mt-0`} role="menubar">
         {
           isUserAvailable && (
             <>
@@ -29,7 +54,7 @@ function NavigationBar() {
         </li>
       </ul>
 
-      <section className="mt-7 md:mt-0" role="region" aria-label="User Authentication">
+      <section className={`${navOptVisibility ? "block" : "hidden"} md:block mt-7 md:mt-0`} role="region" aria-label="User Authentication">
         {userLoading && <p className="text-lg">Loading...</p>}
         {(isUserAvailable && user) ? (
           <div className="flex gap-5 items-center">

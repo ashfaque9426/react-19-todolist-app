@@ -5,6 +5,7 @@ import { errorHandler, isPastDate, showToast } from "../services/utils";
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from "react-router";
 import { ImCheckboxChecked, ImCheckboxUnchecked } from "react-icons/im";
+import useWindowWidth from "../hooks/useWindowWidth";
 
 type TodoRecord = {
     ID: string;
@@ -20,9 +21,17 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
     const [recordDataArr, setRecordDataArr] = useState<TodoRecord[]>([]);
     const [isPending, setPending] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
-    const { user, setFetchNotifications } = useAuth();
+    const { user, setFetchNotifications, setCompHeight, navHeight, footerHeight } = useAuth();
     const [axiosSecure] = useAxiosSecure();
     const navigate = useNavigate();
+    const winWidth = useWindowWidth();
+
+    useEffect(() => {
+        if (navHeight === 0 || footerHeight === 0) return;
+        if ((winWidth <= 1024 && recordDataArr.length > 1) || (winWidth > 1024 && recordDataArr.length > 2)) {
+            setCompHeight("auto");
+        }
+    }, [recordDataArr.length, setCompHeight, navHeight, footerHeight, winWidth]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -50,6 +59,8 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
         setTitle("");
         titleFromEditSetter("");
         showTableDataSetter(false);
+        const heightValue = `calc(100vh - ${navHeight + footerHeight + 11}px)`;
+        setCompHeight(heightValue);
     }
 
     const handleComeplete = async (recordId: string, date: string) => {
@@ -110,7 +121,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
                             <h1 className="invisible">{recordDataArr[0].Title}</h1>
                             {
                                 recordDataArr.map((data) => (
-                                    <li key={uuidv4()} className="bg-white p-4 rounded-lg shadow mb-4">
+                                    <li key={uuidv4()} className="bg-white p-4 rounded-lg shadow mb-8">
                                         <article className="p-4 flex flex-col xl:flex-row justify-between items-start gap-4">
                                             <div className="flex flex-wrap gap-5">
                                                 <div>

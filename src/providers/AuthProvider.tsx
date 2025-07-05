@@ -20,6 +20,17 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [needToVerifyEmail, setNeedToVerifyEmail] = useState(false);
   const [fetchDates, setFetchDates] = useState(false);
   const [fetchNotifications, setFetchNotifications] = useState(false);
+  const [navHeight, setNavHeight] = useState(0);
+  const [footerHeight, setFooterHeight] = useState(0);
+  const [elemCount, setElemCount] = useState(0);
+  const [compHeight, setCompHeight] = useState("");
+
+  useEffect(() => {
+    if (navHeight && footerHeight) {
+      const heightValue = `calc(100vh - ${navHeight + footerHeight + 11}px)`;
+      setCompHeight(heightValue);
+    }
+  }, [navHeight, footerHeight]);
 
   // useRef to store the timeout ids for the refresh token loop
   const timeoutIdArrRef = useRef<NodeJS.Timeout[]>([]);
@@ -289,7 +300,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, fetchNotifications, setIsUserAvailable, setFetchNotifications, login, registerUser, logout, refreshTokenHandler, scheduleTokenRefreshLoop, renderComp, setRenderComp, titleFromEdit, setTitleFromEdit, timeFromEdit, setTimeFromEdit, fetchDates, setFetchDates }}>{children}</AuthContext>
+    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, fetchNotifications, setIsUserAvailable, setFetchNotifications, login, registerUser, logout, refreshTokenHandler, scheduleTokenRefreshLoop, renderComp, setRenderComp, titleFromEdit, setTitleFromEdit, timeFromEdit, setTimeFromEdit, fetchDates, setFetchDates, navHeight, setNavHeight, footerHeight, setFooterHeight, elemCount, setElemCount, compHeight, setCompHeight }}>{children}</AuthContext>
   )
 }
 
