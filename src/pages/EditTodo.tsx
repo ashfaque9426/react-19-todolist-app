@@ -21,7 +21,7 @@ function EditTodo() {
                 return;
             }
             try {
-                const response = await axiosSecure.get(`api/get-todo-record?recordId=${recordId}`);
+                const response = await axiosSecure.get(`api/get-todo-record?recordId=${recordId}`, { withCredentials: true });
                 const { recordData, errMsg } = response.data;
 
                 if (errMsg) {
@@ -92,7 +92,7 @@ function EditTodo() {
             md:bg-[url('../assets/images/background/todo-edit-bg-tablet.webp')] 
             lg:bg-[url('../assets/images/background/todo-edit-bg-desktop.webp')] 
             px-2 md:px-3.5 lg:px-5 text-white`}>
-            <h1 className="font-semibold text-2xl text-center my-12">Modify Todo Record</h1>
+            <h1 className="font-semibold text-2xl text-center py-12">Modify Todo Record</h1>
 
             <TodoForm onSubmit={handleTodoEdit} editTodo={true} recordData={recordData} />
         </div>

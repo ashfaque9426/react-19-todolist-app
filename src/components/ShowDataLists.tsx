@@ -91,7 +91,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
         if (!user || !axiosSecure) return;
         setPending(true);
         try {
-            const res = await axiosSecure.delete(`/api/delete-todo-record/recordId=${recordId}`);
+            const res = await axiosSecure.delete(`/api/delete-todo-record/recordId=${recordId}`, { withCredentials: true });
             if (res.data.errMsg) {
                 setErrorMsg(res.data.errMsg);
             } else {

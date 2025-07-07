@@ -196,14 +196,14 @@ function Notifications() {
             </div>
 
             {
-                showNotifications && <div className='absolute top-12 w-40 -left-12 bg-white p-4 rounded-lg shadow-lg z-10'>
+                showNotifications && <div className='absolute top-12 w-52 -left-12 bg-white p-4 rounded-lg shadow-lg z-10'>
                     {
                         notifications.length > 0 ? (
                             <ul className=" mt-2">
                                 {notifications.reverse().map((notification) => (
-                                    <li key={uuidv4()} className="relative text-black">
+                                    <li key={uuidv4()} className="relative text-black font-semibold">
                                         <span>{notification.split(". ")[0]}</span>
-                                        <small className="absolute bottom-0 right-0 text-xs text-gray-500">Date:{notification.split(". ")[1].split("/")[0]} Time:{notification.split(". ")[1].split("/")[1]}</small>
+                                        <small className="absolute bottom-1 right-0 text-xs text-gray-500">{notification.split(". ")[1].split("/")[0]}/{notification.split(". ")[1].split("/")[1]}</small>
                                     </li>
                                 ))}
                             </ul>

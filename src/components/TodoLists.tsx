@@ -20,7 +20,7 @@ function TodoLists({ userId, selectedDate, title, showDataTable, setShowDataTabl
 
   useEffect(() => {
     if (navHeight === 0 || footerHeight === 0) return;
-    if ((winWidth >= 768 && dataArr.length > 4) || (winWidth > 1279 && dataArr.length > 6)) {
+    if ((winWidth >= 768 && dataArr.length > 4) || (winWidth > 1279 && dataArr.length > 3)) {
       setCompHeight("auto");
     }
   }, [dataArr.length, setCompHeight, navHeight, footerHeight, winWidth]);

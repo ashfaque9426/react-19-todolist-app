@@ -169,8 +169,8 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
             </div>
 
             {/* Success/Error Message */}
-            {state.success && <p className="text-green-400 font-semibold">{state.success}</p>}
-            {state.error && <p className="text-red-400 font-semibold">{state.error}</p>}
+            {state.success && <p className="text-green-500 font-semibold">{state.success}</p>}
+            {state.error && <p className="text-red-500 font-semibold">{state.error}</p>}
         </form>
     );
 };
