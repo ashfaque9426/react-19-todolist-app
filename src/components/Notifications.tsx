@@ -296,6 +296,20 @@ function Notifications() {
                     setNotificationCount(0);
                     setRecord(recordObj);
                 } else if (JSON.stringify(record.times) !== JSON.stringify(recordObj.times)) {
+                    const arrNeededToGetStored = parsedArr.map(recordObj => {
+                        if (recordObj.id === user.userId && recordObj.date === record.date) {
+                            return {
+                                ...recordObj,
+                                times: recordObj.times.length > 0 ? recordObj.times : recordObj.times.concat(recordObj.times)
+                            };
+                        }
+                        return recordObj;
+                    });
+
+                    // Update the localStorage with the new record
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(arrNeededToGetStored));
+
+                    // Update the record state with the new times
                     setRecord(recordObj);
                 }
 
