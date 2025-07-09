@@ -82,7 +82,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
             }
         } catch (err) {
             const { setErrMsgStr } = errorHandler(err, true);
-            setErrorMsg(setErrMsgStr);
+            showToast(setErrMsgStr, 'error');
         }
         setPending(false);
     }
@@ -93,7 +93,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
         try {
             const res = await axiosSecure.delete(`/api/delete-todo-record/recordId=${recordId}`, { withCredentials: true });
             if (res.data.errMsg) {
-                setErrorMsg(res.data.errMsg);
+                showToast(res.data.errMsg, "error");
             } else {
                 showToast(res.data.succMsg, 'success');
                 setRecordDataArr(prev => prev.filter(record => record.ID !== recordId));
@@ -101,7 +101,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
             }
         } catch (err) {
             const { setErrMsgStr } = errorHandler(err, true);
-            setErrorMsg(setErrMsgStr);
+            showToast(setErrMsgStr, 'error');
         }
         setPending(false);
     }
