@@ -6,12 +6,14 @@ import useAuth from '../hooks/useAuth';
 import useAxiosSecure from '../hooks/useAxiosSecure';
 import { v4 as uuidv4 } from 'uuid';
 
+// Define types for time record for times array which needed to get notification records and will look like in localStorage inside Time Array
 type TimeRecord = {
     id: number | null;
     date: string;
     times: string[];
 };
 
+// Notificaton record thats how notification object will look like in localStorage inside Notification Array
 type NotificationRecord = {
     id: number | null;
     date: string;
@@ -19,10 +21,13 @@ type NotificationRecord = {
     notifyCount: number;
 }
 
+// Type for TimeArray which is an array of TimeRecord
 type TimeArray = Array<TimeRecord>;
 
+// Type for NotificationArray which is an array of NotificationRecord
 type NotificationArray = Array<NotificationRecord>;
 
+// Function to get the initial record and for updating the local storage initially
 const getInitialRecord = (): TimeRecord => {
     const userObj = JSON.parse(localStorage.getItem('udTDLT') || '{}');
     if (Object.keys(userObj).length === 0 || !userObj.userId) {
@@ -105,7 +110,7 @@ function Notifications() {
     useEffect(() => {
         if (user && !compLoaded && Object.keys(record).length > 0) {
             const notificationsArr = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
-            const parsedNotificatonsData: NotificationArray = notificationsArr.filter((notification: NotificationRecord) => notification.id === user.userId);
+            const parsedNotificatonsData: NotificationArray = notificationsArr.filter((notification: NotificationRecord) => notification.id === user.userId && notification.date === new Date().toISOString().split('T')[0]);
             const notificationsToUpdateState = parsedNotificatonsData.length > 0 ? parsedNotificatonsData[0].notifications : [];
             const notifyCount = parsedNotificatonsData.length > 0 ? parsedNotificatonsData[0].notifyCount : 0;
             setNotifications(notificationsToUpdateState);
@@ -125,15 +130,16 @@ function Notifications() {
                 if (!userObj || typeof userObj.userId !== 'number') return;
                 if (!event.newValue) return;
 
+                const currDate = new Date().toISOString().split('T')[0];
+
                 // Handle time records
                 if (event.key === LOCAL_STORAGE_KEY) {
                     const records: TimeArray = JSON.parse(event.newValue);
-                    const today = new Date().toISOString().split('T')[0];
 
                     const filteredArr = records.filter(
                         (record) =>
                             record.id === userObj.userId &&
-                            record.date === today &&
+                            record.date === currDate &&
                             record.id !== null &&
                             Array.isArray(record.times) &&
                             record.times.length > 0
@@ -147,10 +153,11 @@ function Notifications() {
                     const notificationsArr: NotificationArray = JSON.parse(event.newValue);
 
                     const filteredNotifications = notificationsArr.filter(
-                        (notification) => notification.id === userObj.userId
+                        (notification) => notification.id === userObj.userId && notification.date === currDate
                     );
 
                     if (filteredNotifications.length > 0) {
+                        setNotifications(filteredNotifications[0].notifications);
                         setNotificationCount(Number(filteredNotifications[0].notifyCount));
                     }
                 }
@@ -192,28 +199,50 @@ function Notifications() {
 
                 // notify the user only if the notify string is not already in notifications state and update the notifications state and update localStorage for notifications and notification count
                 setNotifications(prevNotifications => {
-                    let newCountToStore = 0;
                     if (!prevNotifications.includes(notifyStr)) {
+                        let newCountToStore = 0;
                         setNotificationCount(prevCount => {
                             const newCount = prevCount + 1;
                             newCountToStore = newCount;
                             return newCount;
                         });
-                        const notificationsArr = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
-                        const notificationsArrToStore = notificationsArr.map((notification: NotificationRecord) => {
-                            if (notification.id === record.id) {
-                                return {
-                                    ...notification,
-                                    notifications: [...notification.notifications, notifyStr],
-                                    notifyCount: newCountToStore
-                                };
-                            }
-                            return notification;
-                        });
 
+                        // Update localStorage for notifications
+                        const notificationsArr = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
+                        let notificationsArrToStore: NotificationArray = [];
+
+                        // to update localStorage for notifications, we need to check if the notifications array already exists for the user
+                        // if stored notifications array is found update it with the new notification and update the notificationsArrToStore variable
+                        if (notificationsArr.length > 0) {
+                            notificationsArrToStore = notificationsArr.map((notification: NotificationRecord) => {
+                                if (notification.id === record.id && notification.date === record.date) {
+                                    return {
+                                        ...notification,
+                                        notifications: [...notification.notifications, notifyStr],
+                                        notifyCount: newCountToStore
+                                    };
+                                }
+                                return notification;
+                            });
+                        } else {
+                            // if stored notifications array is not found or empty push the new notification to the notificationsArrToStore array
+                            notificationsArrToStore.push({
+                                id: record.id,
+                                date: record.date,
+                                notifications: [notifyStr],
+                                notifyCount: newCountToStore
+                            });
+                        }
+
+                        // now stringify and store the notificationsArrToStore array in the localStorage
                         localStorage.setItem(LOCAL_STORAGE_KEY_NOTIFICATIONS, JSON.stringify(notificationsArrToStore));
+
+                        // Return the updated notifications state
                         return [...prevNotifications, notifyStr];
                     }
+
+                    // If the notification already exists, do not add it again
+                    // This prevents duplicate notifications for the same time
                     return prevNotifications;
                 });
             }
@@ -251,12 +280,21 @@ function Notifications() {
                 };
 
                 if (record.date !== recordObj.date) {
-                    setRecord(recordObj);
-                    parsedArr.push(recordObj);
-                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsedArr));
-                    localStorage.removeItem(LOCAL_STORAGE_KEY_NOTIFICATIONS);
+                    // If the date has changed, update the record and clear notifications update the localStorage
+                    // for the times array user with record.id and remove the recordObj stored in localStorage with old date and update the local stroage with the new one.
+                    const arrNeededToGetStored = parsedArr.filter(recordObj => recordObj.id !== record.id);
+                    arrNeededToGetStored.push(recordObj);
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(arrNeededToGetStored));
+
+                    // for notifications, filter out the notifications for the previous date for user that does not match with record.id(here means deleting the old one which matches the notification.id with record.id which is actually the user id)
+                    const notificationsArr = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
+                    const notificaitonsNeededToGetStored: NotificationArray = notificationsArr.filter((notification: NotificationRecord) => notification.id !== record.id);
+                    localStorage.setItem(LOCAL_STORAGE_KEY_NOTIFICATIONS, JSON.stringify(notificaitonsNeededToGetStored));
+
+                    // update the record state and clear notifications
                     setNotifications([]);
                     setNotificationCount(0);
+                    setRecord(recordObj);
                 } else if (JSON.stringify(record.times) !== JSON.stringify(recordObj.times)) {
                     setRecord(recordObj);
                 }
