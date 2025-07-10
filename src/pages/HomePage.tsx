@@ -26,9 +26,9 @@ function HomePage() {
         <>
             {
                 compHeight && <div
-                    style={{ "--md-height": compHeight } as React.CSSProperties & Record<string, unknown>}
+                    style={{ "--comp-height": compHeight } as React.CSSProperties & Record<string, unknown>}
                     className={`
-                        md:[height:var(--md-height)]
+                        [height:var(--comp-height)]
                         w-full bg-no-repeat bg-cover bg-center relative
                         bg-[url('../assets/images/background/todo-bg-mobile.webp')]
                         md:bg-[url('../assets/images/background/todo-bg-tablet.webp')]

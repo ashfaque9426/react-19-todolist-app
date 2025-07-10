@@ -27,7 +27,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (navHeight && footerHeight) {
-      const heightValue = `calc(100vh - ${navHeight + footerHeight + 11}px)`;
+      const heightValue = `calc(100vh - ${navHeight + footerHeight}px)`;
       setCompHeight(heightValue);
     }
   }, [navHeight, footerHeight]);

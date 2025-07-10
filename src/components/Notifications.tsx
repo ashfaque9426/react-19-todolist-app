@@ -36,7 +36,7 @@ const getInitialRecord = (): TimeRecord => {
     const storedArr = localStorage.getItem(LOCAL_STORAGE_KEY) || '[]';
     try {
         const parsedArr: TimeArray = JSON.parse(storedArr);
-        const filteredArr = parsedArr.filter(record => record.id === userObj.userId && record.date === new Date().toISOString().split('T')[0] && record.id !== null && record.times.length > 0);
+        const filteredArr = parsedArr.filter(record => record.id === userObj.userId && record.date === new Date().toISOString().split('T')[0] && record.times.length > 0);
 
         if (filteredArr.length > 0) {
             return filteredArr[0];
@@ -45,7 +45,7 @@ const getInitialRecord = (): TimeRecord => {
         const arrNeededToGetStored = parsedArr.filter(record => record.id !== userObj.userId);
         const notificationsArr = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
 
-        const notificaitonsNeededToGetStored: NotificationArray = notificationsArr.filter((notification: NotificationRecord) => notification.id !== userObj.userId);
+        const notificaitonsNeededToGetStored: NotificationArray = notificationsArr.filter((notification: NotificationRecord) => notification.id !== userObj.userId && notification.date !== new Date().toISOString().split('T')[0]);
 
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(arrNeededToGetStored));
         localStorage.setItem(LOCAL_STORAGE_KEY_NOTIFICATIONS, JSON.stringify(notificaitonsNeededToGetStored));

@@ -17,7 +17,7 @@ type TodoRecord = {
     UserID: string;
 };
 
-function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEditSetter }: { showTableDataSetter: (show: boolean) => void, date: string, title: string, setTitle: (title: "") => void, titleFromEditSetter: (title: "") => void }) {
+function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEditSetter, parentDataLen }: { showTableDataSetter: (show: boolean) => void, date: string, title: string, setTitle: (title: "") => void, titleFromEditSetter: (title: "") => void, parentDataLen: number }) {
     const [recordDataArr, setRecordDataArr] = useState<TodoRecord[]>([]);
     const [isPending, setPending] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -59,8 +59,11 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
         setTitle("");
         titleFromEditSetter("");
         showTableDataSetter(false);
-        const heightValue = `calc(100vh - ${navHeight + footerHeight + 11}px)`;
-        setCompHeight(heightValue);
+        if (winWidth < 768 && parentDataLen < 4) {
+            setCompHeight("100vh");
+        } else if ((winWidth >= 768 && parentDataLen > 4) || (winWidth > 1279 && parentDataLen > 3)) {
+            setCompHeight("auto");
+        }
     }
 
     const handleComeplete = async (recordId: string, date: string) => {

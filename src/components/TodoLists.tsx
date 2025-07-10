@@ -22,7 +22,10 @@ function TodoLists({ userId, selectedDate, title, showDataTable, setShowDataTabl
     if (navHeight === 0 || footerHeight === 0) return;
     if ((winWidth >= 768 && dataArr.length > 4) || (winWidth > 1279 && dataArr.length > 3)) {
       setCompHeight("auto");
+    } else if ((!showDataTable && winWidth < 768 && dataArr.length < 4) || (showDataTable && winWidth < 768 && dataArr.length < 2)) {
+      setCompHeight("100vh");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataArr.length, setCompHeight, navHeight, footerHeight, winWidth]);
 
   useEffect(() => {
@@ -58,7 +61,7 @@ function TodoLists({ userId, selectedDate, title, showDataTable, setShowDataTabl
 
 
   return (
-    <div className="relative">{loading ? <LoadingData /> : errorMsg ? <ShowErrMsg errMsg={errorMsg} /> : !showDataTable ? <ShowDataCards dataArray={dataArr} showTableDataSetter={setShowDataTable} setTitle={setTitle} /> : <ShowDataLists date={selectedDate} title={title} showTableDataSetter={setShowDataTable} setTitle={setTitle} titleFromEditSetter={setTitleFromEdit} />}</div>
+    <div className="relative">{loading ? <LoadingData /> : errorMsg ? <ShowErrMsg errMsg={errorMsg} /> : !showDataTable ? <ShowDataCards dataArray={dataArr} showTableDataSetter={setShowDataTable} setTitle={setTitle} /> : <ShowDataLists date={selectedDate} title={title} showTableDataSetter={setShowDataTable} setTitle={setTitle} titleFromEditSetter={setTitleFromEdit} parentDataLen={dataArr.length} />}</div>
   )
 }
 
