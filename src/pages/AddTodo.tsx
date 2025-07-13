@@ -78,14 +78,14 @@ function AddTodo() {
     };
 
     return (
-        <div className={`w-full h-[calc(100vh-48px)] bg-no-repeat bg-cover bg-center relative 
+        <div className={`w-full h-screen bg-no-repeat bg-cover bg-center relative 
             bg-[url('../assets/images/background/todo-edit-bg-mobile.webp')] 
             md:bg-[url('../assets/images/background/todo-edit-bg-tablet.webp')] 
             lg:bg-[url('../assets/images/background/todo-edit-bg-desktop.webp')] 
-            px-2 md:px-3.5 lg:px-5 text-white`}>
+            px-3.5 text-white`}>
             
             {/* add todo record page heading */}
-            <h1 className="font-semibold text-2xl text-center py-12">Add Todo Record</h1>
+            <h1 className="font-semibold text-2xl text-center pt-24 pb-12 md:pt-16">Add Todo Record</h1>
 
             {/* Todo Form for adding todo record */}
             <TodoForm onSubmit={handleFormSubmission} titleArr={arrOfTitles} />

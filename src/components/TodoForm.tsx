@@ -61,10 +61,10 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
     }, [editTodo, recordData, setTimeFromEdit]);
 
     return (
-        <form action={formAction} className="max-w-md mx-auto p-6 bg-[#ccbcbc] rounded-2xl shadow-lg space-y-6">
+        <form action={formAction} className="max-w-md mx-auto p-6 bg-[#d1b8b8] rounded-2xl shadow-lg space-y-6">
             {/* Date Field */}
             <div>
-                <label htmlFor="date" className="block text-sm font-medium mb-1">
+                <label htmlFor="date" className="block text-lg font-semibold mb-1">
                     Date
                 </label>
                 <input
@@ -80,7 +80,7 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
 
             {/* Time Field */}
             <div>
-                <label htmlFor="time" className="block text-sm font-medium mb-1">
+                <label htmlFor="time" className="block text-lg font-semibold mb-1">
                     Time
                 </label>
                 <input
@@ -96,11 +96,11 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
 
             {/* select field for titles */}
             {
-                ((!showTitleInput || !editTodo) && (titleArr && titleArr.length > 0)) ? (
-                    <div className="flex justify-between lg:justify-baseline items-center">
-                        <span className="cursor-pointer">
-                            <label className="text-lg font-semibold mr-1.5 cursor-text" htmlFor="title-select">Select a Title:</label>
-                            <select className="px-2 py-1 border rounded-lg focus:outline-0" id="title-select" name='title' value={selectedTitle} onChange={handleTitleChange}>
+                ((!showTitleInput && !editTodo) && (titleArr && titleArr.length > 0)) ? (
+                    <div className="flex items-end">
+                        <span className="w-2/3 cursor-pointer">
+                            <label className="text-lg font-semibold cursor-text" htmlFor="title-select">Select a Title</label>
+                            <select className="mt-1 ps-2 py-1 w-full border rounded-lg focus:outline-0 font-semibold" id="title-select" name='title' value={selectedTitle} onChange={handleTitleChange}>
                                 {titleArr.map((title: string) => (
                                     <option className="text-black" key={uuidv4()} value={title}>
                                         {title}
@@ -108,10 +108,10 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
                                 ))}
                             </select>
                         </span>
-                        <button onClick={handleShowTitleInput} className="px-2 py-1 bg-white text-black font-semibold hover:bg-gray-200 transition rounded-md cursor-pointer">Add New Title</button>
+                        <span onClick={handleShowTitleInput} className="w-1/3 ml-2.5 p-1 bg-white text-black text-center font-semibold hover:bg-gray-200 transition rounded-md cursor-pointer">Add Title</span>
                     </div>)
                     : (<div>
-                        <label htmlFor="title" className="block text-sm font-medium mb-1">
+                        <label htmlFor="title" className="block text-sm font-semibold mb-1">
                             Title
                         </label>
                         <input
@@ -128,7 +128,7 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
 
             {/* Description Field */}
             <div>
-                <label htmlFor="description" className="block text-sm font-medium mb-1">
+                <label htmlFor="description" className="block text-lg font-semibold mb-1">
                     Description
                 </label>
                 <textarea
@@ -145,7 +145,7 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
             {/* Hidden status field */}
             {
                 (editTodo && recordData) && <div className='invisible'>
-                    <label htmlFor="status" className="block text-sm font-medium mb-1">
+                    <label htmlFor="status" className="block text-sm font-semibold mb-1">
                         Status
                     </label>
                     <input

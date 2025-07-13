@@ -186,6 +186,16 @@ function Notifications() {
             }
         };
 
+        // To check if localStorage already has the notification string for the record
+        const isAlreadyStored = (notifyStr: string): boolean => {
+            const notificationsArr = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
+            return notificationsArr.some((notification: NotificationRecord) =>
+                notification.id === record.id &&
+                notification.date === record.date &&
+                notification.notifications.includes(notifyStr)
+            );
+        };
+
         // Function to check each time sequentially
         // This will wait for each time to pass before notifying the user
         const checkTimesSequentially = async () => {
@@ -195,56 +205,40 @@ function Notifications() {
                 await waitUntilTimePassed(record.date, time); // wait until passed
                 if (isCancelled) return;
 
-                const notifyStr = `Your scheduled for time: ${time} has just passed. ${record.date}/${time}`;
+                const notifyStr = `Your scheduled for time: ${time} has passed. ${record.date}/${time}`;
 
                 // notify the user only if the notify string is not already in notifications state and update the notifications state and update localStorage for notifications and notification count
-                setNotifications(prevNotifications => {
-                    if (!prevNotifications.includes(notifyStr)) {
-                        let newCountToStore = 0;
-                        setNotificationCount(prevCount => {
-                            const newCount = prevCount + 1;
-                            newCountToStore = newCount;
-                            return newCount;
+                if (!isAlreadyStored(notifyStr)) {
+                    // Add to localStorage
+                    const notificationsArr = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
+                    let notificationsArrToStore: NotificationArray = [];
+
+                    if (notificationsArr.length > 0) {
+                        notificationsArrToStore = notificationsArr.map((notification: NotificationRecord) => {
+                            if (notification.id === record.id && notification.date === record.date) {
+                                return {
+                                    ...notification,
+                                    notifications: [...notification.notifications, notifyStr],
+                                    notifyCount: notification.notifyCount + 1,
+                                };
+                            }
+                            return notification;
                         });
-
-                        // Update localStorage for notifications
-                        const notificationsArr = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NOTIFICATIONS) || '[]');
-                        let notificationsArrToStore: NotificationArray = [];
-
-                        // to update localStorage for notifications, we need to check if the notifications array already exists for the user
-                        // if stored notifications array is found update it with the new notification and update the notificationsArrToStore variable
-                        if (notificationsArr.length > 0) {
-                            notificationsArrToStore = notificationsArr.map((notification: NotificationRecord) => {
-                                if (notification.id === record.id && notification.date === record.date) {
-                                    return {
-                                        ...notification,
-                                        notifications: [...notification.notifications, notifyStr],
-                                        notifyCount: newCountToStore
-                                    };
-                                }
-                                return notification;
-                            });
-                        } else {
-                            // if stored notifications array is not found or empty push the new notification to the notificationsArrToStore array
-                            notificationsArrToStore.push({
-                                id: record.id,
-                                date: record.date,
-                                notifications: [notifyStr],
-                                notifyCount: newCountToStore
-                            });
-                        }
-
-                        // now stringify and store the notificationsArrToStore array in the localStorage
-                        localStorage.setItem(LOCAL_STORAGE_KEY_NOTIFICATIONS, JSON.stringify(notificationsArrToStore));
-
-                        // Return the updated notifications state
-                        return [...prevNotifications, notifyStr];
+                    } else {
+                        notificationsArrToStore.push({
+                            id: record.id,
+                            date: record.date,
+                            notifications: [notifyStr],
+                            notifyCount: 1,
+                        });
                     }
 
-                    // If the notification already exists, do not add it again
-                    // This prevents duplicate notifications for the same time
-                    return prevNotifications;
-                });
+                    localStorage.setItem(LOCAL_STORAGE_KEY_NOTIFICATIONS, JSON.stringify(notificationsArrToStore));
+
+                    // Then update state
+                    setNotificationCount(prev => prev + 1);
+                    setNotifications(prev => [...prev, notifyStr]);
+                }
             }
         };
 
@@ -319,7 +313,7 @@ function Notifications() {
             }
         };
 
-        const isDateOutdated = record.date !== today.toISOString().split("T")[0];
+        const isDateOutdated = record.date && record.date !== today.toISOString().split("T")[0];
 
         if ((fetchNotifications || isDateOutdated) || (compLoaded && !todoTimesFetched)) {
             todoTimesFetchedForToday();
@@ -329,21 +323,21 @@ function Notifications() {
 
 
     return (
-        <div className='relative'>
+        <div className='relative z-50'>
             <div onClick={handleNotificationClick} className="cursor-pointer px-2 py-1 rounded-lg shadow-lg">
                 <span className='absolute -top-1.5 -right-0.5'>{notificationCount}</span>
                 <span className='text-2xl'><MdOutlineNotificationsActive /></span>
             </div>
 
             {
-                showNotifications && <div className='absolute top-12 w-52 -left-12 bg-white p-4 rounded-lg shadow-lg z-10'>
+                showNotifications && <div className='absolute top-12 w-72 -left-26 md:-left-32 bg-white p-4 rounded-lg shadow-lg z-10'>
                     {
                         notifications.length > 0 ? (
-                            <ul className=" mt-2">
+                            <ul>
                                 {notifications.reverse().map((notification) => (
-                                    <li key={uuidv4()} className="relative text-black font-semibold">
-                                        <span>{notification.split(". ")[0]}</span>
-                                        <small className="absolute bottom-1 right-0 text-xs text-gray-500">{notification.split(". ")[1].split("/")[0]}/{notification.split(". ")[1].split("/")[1]}</small>
+                                    <li key={uuidv4()} className="relative text-black text-lg font-semibold mb-3">
+                                        <span>{notification.split(". ")[0]}.</span>
+                                        <small className="absolute bottom-1 right-1 text-xs text-gray-500">{notification.split(". ")[1].split("/")[0]}/{notification.split(". ")[1].split("/")[1]}</small>
                                     </li>
                                 ))}
                             </ul>
