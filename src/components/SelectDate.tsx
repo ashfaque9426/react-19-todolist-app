@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CiSquarePlus } from "react-icons/ci";
 import { useNavigate } from "react-router";
 
-function SelectDate({ userId, selectedDate, setSelectedDate, title, setFetchDates }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string, fetchDates: boolean, setFetchDates: (state: boolean) => void }) {
+function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchDates, setFetchDates }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string, fetchDates: boolean, setFetchDates: (state: boolean) => void }) {
     const [dates, setDates] = useState<string[]>([]);
     const [err, setErr] = useState<string | null>(null);
     const [todoDatesFetched, setTodoDatesFetched] = useState(false);
@@ -31,10 +31,7 @@ function SelectDate({ userId, selectedDate, setSelectedDate, title, setFetchDate
                     setDates(dateArr);
                 }
 
-                if (dateArr.length > 0 && !selectedDate) {
-                    setSelectedDate(dateArr[0]);
-                }
-
+                setSelectedDate(dateArr[0]);
                 setTodoDatesFetched(true);
                 setFetchDates(false);
             } catch (error) {
@@ -43,12 +40,12 @@ function SelectDate({ userId, selectedDate, setSelectedDate, title, setFetchDate
             }
         }
 
-        if(!todoDatesFetched) {
+        if(fetchDates || !todoDatesFetched) {
             fetchTodoDates();
         }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [axiosSecure, userId, todoDatesFetched, setSelectedDate, setFetchDates]);
+    }, [axiosSecure, userId, todoDatesFetched, fetchDates, setSelectedDate, setFetchDates]);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
         setSelectedDate(event.target.value);
@@ -77,7 +74,7 @@ function SelectDate({ userId, selectedDate, setSelectedDate, title, setFetchDate
                                         </span> : <span className="px-2 py-1 border rounded-lg cursor-pointer">{selectedDate}</span>
                                     }
                                     <button onClick={() => navigate('/add-todo')} className="text-[40px] ml-1"><CiSquarePlus /></button>
-                                </div>) : <p className="lg:p-2 text-black font-semibold text-lg">{title}</p>
+                                </div>) : <p className="py-1.5 text-black font-semibold text-lg">{title}</p>
                             }
                         </div>
                     </div>

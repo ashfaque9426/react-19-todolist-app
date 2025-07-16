@@ -290,14 +290,14 @@ function Notifications() {
                     setNotificationCount(0);
                     setRecord(recordObj);
                 } else if (JSON.stringify(record.times) !== JSON.stringify(recordObj.times)) {
-                    const arrNeededToGetStored = parsedArr.map(recordObj => {
-                        if (recordObj.id === user.userId && recordObj.date === record.date) {
+                    const arrNeededToGetStored = parsedArr.map(storedRecord => {
+                        if (storedRecord.id === user.userId && storedRecord.date === record.date) {
                             return {
-                                ...recordObj,
-                                times: recordObj.times.length > 0 ? recordObj.times : recordObj.times.concat(recordObj.times)
+                                ...storedRecord,
+                                times: recordObj.times.length > 0 ? recordObj.times : []
                             };
                         }
-                        return recordObj;
+                        return storedRecord;
                     });
 
                     // Update the localStorage with the new record
@@ -334,7 +334,7 @@ function Notifications() {
                     {
                         notifications.length > 0 ? (
                             <ul>
-                                {notifications.reverse().map((notification) => (
+                                {[...notifications].reverse().map((notification) => (
                                     <li key={uuidv4()} className="relative text-black text-lg font-semibold mb-3">
                                         <span>{notification.split(". ")[0]}.</span>
                                         <small className="absolute bottom-1 right-1 text-xs text-gray-500">{notification.split(". ")[1].split("/")[0]}/{notification.split(". ")[1].split("/")[1]}</small>
