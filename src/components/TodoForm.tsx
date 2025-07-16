@@ -136,6 +136,7 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
                     name="description"
                     rows={4}
                     value={description}
+                    placeholder="You can write description 256 characters long max."
                     onChange={(e) => setDescription(e.target.value)}
                     required
                     className="w-full p-2 rounded-md bg-white text-black resize-none focus:outline-none"
@@ -169,8 +170,8 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
             </div>
 
             {/* Success/Error Message */}
-            {state.success && <p className="text-green-500 font-semibold">{state.success}</p>}
-            {state.error && <p className="text-red-500 font-semibold">{state.error}</p>}
+            {state.success && <p className="text-[#009500] text-lg leading-relaxed text-center font-semibold">{state.success}</p>}
+            {state.error && <p className="text-[#800000] text-lg leading-relaxed text-center font-semibold">{state.error}</p>}
         </form>
     );
 };

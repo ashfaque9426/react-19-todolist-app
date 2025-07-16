@@ -170,21 +170,21 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
                             <h1 className="invisible">{recordDataArr[0].Title}</h1>
                             {
                                 recordDataArr.map((data) => (
-                                    <li key={uuidv4()} className="bg-white p-4 rounded-lg shadow mb-8">
-                                        <article className="p-4 flex flex-col xl:flex-row justify-between items-start gap-4">
-                                            <div className="flex flex-wrap gap-5">
+                                    <li key={uuidv4()} className="bg-white p-5 xl:p-8 rounded-lg shadow mb-8">
+                                        <article className="flex flex-col xl:flex-row gap-4">
+                                            <div className="flex flex-wrap gap-10 xl:w-[80%]">
                                                 <div>
                                                     <span className="font-semibold">Checkmark:</span><br />
                                                     <button onClick={() => handleComeplete(data.ID, data.Date)} disabled={isPastDate(data.Date) || data.Status === "completed" || isPending} className='cursor-pointer mt-1.5 rounded-lg disabled:cursor-not-allowed'>{data.Status === 'completed' ? <ImCheckboxChecked /> : <ImCheckboxUnchecked />}</button>
                                                 </div>
                                                 <p><span className='font-semibold'>Date:</span><br /> {data.Date}</p>
                                                 <p><span className='font-semibold'>Time:</span><br /> {data.Time}</p>
-                                                <p className="xl:w-2/3"><span className='font-semibold'>Description:</span><br /> {data.Description}</p>
                                                 <p><span className='font-semibold'>Status:</span><br /> {data.Status}</p>
+                                                <p className="xl:w-2/3"><span className='font-semibold'>Description:</span><br /> {data.Description}</p>
                                             </div>
-                                            <div className="flex flex-wrap gap-4">
-                                                <button onClick={() => navigate(`/edit-todo/${data.ID}`)} disabled={isPastDate(data.Date) || isPending} className='px-2 py-1 bg-black text-white cursor-pointer mt-3.5 rounded-lg disabled:text-gray-500 disabled:cursor-not-allowed'>Edit</button>
-                                                <button onClick={() => handleDelete(data.ID, data.Date, data.Time)} disabled={isPastDate(data.Date) || isPending} className='px-2 py-1 bg-red-500 text-white cursor-pointer mt-3.5 rounded-lg disabled:bg-red-300 disabled:text-gray-100 disabled:cursor-not-allowed'>{!isPending ? "Delete" : "Deleting..."}</button>
+                                            <div className="flex flex-wrap items-center gap-4 xl:w-[20%]">
+                                                <button onClick={() => navigate(`/edit-todo/${data.ID}`)} disabled={isPastDate(data.Date) || isPending} className='px-2 py-1 bg-black text-white text-lg cursor-pointer rounded-lg mt-5 xl:mt-0 disabled:text-gray-500 disabled:cursor-not-allowed'>Edit</button>
+                                                <button onClick={() => handleDelete(data.ID, data.Date, data.Time)} disabled={isPastDate(data.Date) || isPending} className='px-2 py-1 bg-red-500 text-white text-lg cursor-pointer rounded-lg mt-5 xl:mt-0 disabled:bg-red-300 disabled:text-gray-100 disabled:cursor-not-allowed'>{!isPending ? "Delete" : "Deleting..."}</button>
                                             </div>
                                         </article>
                                     </li>
