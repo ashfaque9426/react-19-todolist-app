@@ -19,7 +19,7 @@ function TodoLists({ userId, selectedDate, title, showDataTable, setShowDataTabl
 
   const winWidth = useWindowWidth();
 
-  const { setCompHeight } = useAuth();
+  const { navHeight, footerHeight, setCompHeight } = useAuth();
 
   useEffect(() => {
     // Set shared global component height based on window width and data length
@@ -27,9 +27,13 @@ function TodoLists({ userId, selectedDate, title, showDataTable, setShowDataTabl
       setCompHeight("auto");
     } else if ((!showDataTable && winWidth < 768 && dataArrLen < 3) || (showDataTable && winWidth < 768 && recordDataLen < 2)) {
       setCompHeight("100vh");
+    } else if ((!showDataTable && winWidth >= 1440 && dataArrLen < 3) || (showDataTable && winWidth >= 1440 && recordDataLen < 2)) {
+      const heightValue = `calc(100vh - ${navHeight + footerHeight}px)`;
+      setCompHeight(heightValue);
     } else {
       setCompHeight("100vh");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataArrLen, recordDataLen, setCompHeight, winWidth, showDataTable]);
 
   useEffect(() => {

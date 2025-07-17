@@ -29,7 +29,7 @@ function HomePage() {
                     style={{ "--comp-height": compHeight } as React.CSSProperties & Record<string, unknown>}
                     className={`
                         [height:var(--comp-height)]
-                        w-full bg-no-repeat bg-cover bg-center relative
+                        w-full bg-no-repeat bg-cover bg-center bg-fixed relative
                         bg-[url('../assets/images/background/todo-bg-mobile.webp')]
                         md:bg-[url('../assets/images/background/todo-bg-tablet.webp')]
                         lg:bg-[url('../assets/images/background/todo-bg-desktop.webp')]
