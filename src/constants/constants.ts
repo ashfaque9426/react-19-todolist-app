@@ -9,3 +9,5 @@ export const updatePassBackendUrl = `${apiUrl}/api/update-password`;
 
 export const LOCAL_STORAGE_KEY = import.meta.env.VITE_LOCAL_STORAGE_KEY;
 export const LOCAL_STORAGE_KEY_NOTIFICATIONS = import.meta.env.VITE_LOCAL_STORAGE_NOTIFICATION_KEY;
+
+export const userAccessKey = import.meta.env.VITE_USER_ACCESS_TOKEN_STR;

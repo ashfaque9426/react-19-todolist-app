@@ -1,6 +1,6 @@
 import { useState, ReactNode, useEffect, createContext, useCallback, useRef } from "react";
 import Cookies from 'js-cookie';
-import { loginUrl, logoutUrl, registerUrl } from "../constants/constants";
+import { loginUrl, logoutUrl, registerUrl, userAccessKey } from "../constants/constants";
 import { decodeJwt } from "jose"
 import { refreshAccessToken, showToast } from "../services/utils";
 import { LoginCredentials, RegisterCredentials, ServResUserLoginData, User } from "../services/dataTypes";
@@ -15,6 +15,8 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [renderComp, setRenderComp] = useState("");
   const [titleFromEdit, setTitleFromEdit] = useState("");
   const [timeFromEdit, setTimeFromEdit] = useState("");
+  const [compHeight, setCompHeight] = useState("");
+  const [recordStatus, setRecordStatus] = useState("");
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
   const [needToVerifyEmail, setNeedToVerifyEmail] = useState(false);
@@ -23,7 +25,6 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [navHeight, setNavHeight] = useState(0);
   const [footerHeight, setFooterHeight] = useState(0);
   const [elemCount, setElemCount] = useState(0);
-  const [compHeight, setCompHeight] = useState("");
 
   useEffect(() => {
     if (navHeight && footerHeight) {
@@ -50,7 +51,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       setUserLoading(false);
       return { success: "", error: servRes.errMsg };
     } else if (servRes.userData) {
-      Cookies.set('uscTDLT', servRes.userData.accessToken);
+      Cookies.set(userAccessKey, servRes.userData.accessToken);
       setUser({
         userId: servRes.userData.userId,
         userName: servRes.userData.userName,
@@ -147,7 +148,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   // logout function to logout user
   // and to remove the user data from the state
   const logout = useCallback(async (userEmail: string) => {
-    const userSecret: string | undefined = Cookies.get('uscTDLT');
+    const userSecret: string | undefined = Cookies.get(userAccessKey);
     if (!userEmail || !userSecret) {
       console.error(!userEmail ? "User Email parameter value is required to logout an user." : "User must be logged in to get logged out.");
       return;
@@ -172,7 +173,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
       else if (succMsg) {
         showToast(succMsg, "success");
         // remove the cookie and set the user to undefined
-        Cookies.remove('uscTDLT');
+        Cookies.remove(userAccessKey);
 
         // clear the local storage data
         localStorage.removeItem('udTDLT');
@@ -207,7 +208,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     } else if (errMsg) {
       console.error(errMsg);
     } else if (accessToken) {
-      Cookies.set('uscTDLT', accessToken);
+      Cookies.set(userAccessKey, accessToken);
       success = true;
     }
 
@@ -218,7 +219,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     let refreshTimeout: NodeJS.Timeout;
 
     const schedule = () => {
-      const token = Cookies.get('uscTDLT');
+      const token = Cookies.get(userAccessKey);
 
       if (!token) {
         return;
@@ -275,7 +276,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   // Check if the user is logged in or not
   // and set the user data in the state accordingly
   useEffect(() => {
-    const userSecret = Cookies.get('uscTDLT');
+    const userSecret = Cookies.get(userAccessKey);
     // check if the user is logged in but the user data is not available
     // then decode the jwt token and set the user data in the state
     if (!user && userSecret) {
@@ -300,7 +301,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, fetchNotifications, setIsUserAvailable, setFetchNotifications, login, registerUser, logout, refreshTokenHandler, scheduleTokenRefreshLoop, renderComp, setRenderComp, titleFromEdit, setTitleFromEdit, timeFromEdit, setTimeFromEdit, fetchDates, setFetchDates, navHeight, setNavHeight, footerHeight, setFooterHeight, elemCount, setElemCount, compHeight, setCompHeight }}>{children}</AuthContext>
+    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, fetchNotifications, setIsUserAvailable, setFetchNotifications, login, registerUser, logout, refreshTokenHandler, scheduleTokenRefreshLoop, renderComp, setRenderComp, titleFromEdit, setTitleFromEdit, timeFromEdit, setTimeFromEdit, fetchDates, setFetchDates, navHeight, setNavHeight, footerHeight, setFooterHeight, elemCount, setElemCount, compHeight, setCompHeight, recordStatus, setRecordStatus }}>{children}</AuthContext>
   )
 }
 

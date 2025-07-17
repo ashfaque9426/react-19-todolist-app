@@ -27,7 +27,7 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
         error: '',
     });
 
-    const { renderComp, setRenderComp, setTimeFromEdit } = useAuth();
+    const { renderComp, setRenderComp, setTimeFromEdit, setRecordStatus } = useAuth();
 
     const navigate = useNavigate();
 
@@ -57,8 +57,9 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
             setTimeFromEdit(recordData.todo_time);
             setTitle(recordData.todo_title);
             setDescription(recordData.todo_description);
+            setRecordStatus(recordData.todo_status);
         }
-    }, [editTodo, recordData, setTimeFromEdit]);
+    }, [editTodo, recordData, setTimeFromEdit, setRecordStatus]);
 
     return (
         <form action={formAction} className="max-w-md mx-auto p-6 bg-[#d1b8b8] rounded-2xl shadow-lg space-y-6">
@@ -143,22 +144,6 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
                 />
             </div>
 
-            {/* Hidden status field */}
-            {
-                (editTodo && recordData) && <div className='invisible'>
-                    <label htmlFor="status" className="block text-sm font-semibold mb-1">
-                        Status
-                    </label>
-                    <input
-                        type="text"
-                        id="status"
-                        name="status"
-                        value={recordData ? recordData.todo_status : ""}
-                        className="w-full p-2 rounded-md bg-white text-black resize-none focus:outline-none"
-                    />
-                </div>
-            }
-
             {/* Submit Button */}
             <div>
                 <button
@@ -171,7 +156,7 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
 
             {/* Success/Error Message */}
             {state.success && <p className="text-[#009500] text-lg leading-relaxed text-center font-semibold">{state.success}</p>}
-            {state.error && <p className="text-[#800000] text-lg leading-relaxed text-center font-semibold">{state.error}</p>}
+            {state.error && <p className="text-[#800000] text-lg leading-relaxed text-center font-semibold">{state.error.includes('304') ? "You have not modified your todo list data." : state.error}</p>}
         </form>
     );
 };

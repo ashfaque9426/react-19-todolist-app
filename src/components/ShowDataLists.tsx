@@ -83,13 +83,17 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
         setTitle("");
         titleFromEditSetter("");
         showTableDataSetter(false);
+        
         // Adjust component height based on window width and parent data length
         if (winWidth < 768 && parentDataLen < 4) {
             setCompHeight("100vh");
         } else if ((winWidth >= 768 && parentDataLen > 4) || (winWidth > 1279 && parentDataLen > 3)) {
             setCompHeight("auto");
+        } else {
+            const heightValue = `calc(100vh - ${navHeight + footerHeight}px)`;
+            setCompHeight(heightValue);
         }
-    }, [setCompHeight, setTitle, showTableDataSetter, titleFromEditSetter, winWidth, parentDataLen]);
+    }, [setCompHeight, setTitle, showTableDataSetter, titleFromEditSetter, winWidth, parentDataLen, navHeight, footerHeight]);
 
     // Handler to mark a todo record as completed
     const handleComeplete = async (recordId: string, date: string) => {
@@ -129,12 +133,12 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
     }, [recordDataArr.length, dataDeleted, handleClick]);
 
     // Handler to delete a todo record
-    const handleDelete = async (recordId: string, date: string, time: string) => {
+    const handleDelete = async (recordId: string, date: string) => {
         if (!user || !axiosSecure) return;
         setPending(true);
         try {
             // Send DELETE request to remove the record
-            const res = await axiosSecure.delete(`/api/delete-todo-record/${recordId}/${date}/${time}`, { withCredentials: true });
+            const res = await axiosSecure.delete(`/api/delete-todo-record/${recordId}/${date}`, { withCredentials: true });
             if (res.data.errMsg) {
                 showToast(res.data.errMsg, "error");
             } else {
@@ -184,7 +188,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
                                             </div>
                                             <div className="flex flex-wrap items-center gap-4 xl:w-[20%]">
                                                 <button onClick={() => navigate(`/edit-todo/${data.ID}`)} disabled={isPastDate(data.Date) || isPending} className='px-2 py-1 bg-black text-white text-lg cursor-pointer rounded-lg mt-5 xl:mt-0 disabled:text-gray-500 disabled:cursor-not-allowed'>Edit</button>
-                                                <button onClick={() => handleDelete(data.ID, data.Date, data.Time)} disabled={isPastDate(data.Date) || isPending} className='px-2 py-1 bg-red-500 text-white text-lg cursor-pointer rounded-lg mt-5 xl:mt-0 disabled:bg-red-300 disabled:text-gray-100 disabled:cursor-not-allowed'>{!isPending ? "Delete" : "Deleting..."}</button>
+                                                <button onClick={() => handleDelete(data.ID, data.Date)} disabled={isPastDate(data.Date) || isPending} className='px-2 py-1 bg-red-500 text-white text-lg cursor-pointer rounded-lg mt-5 xl:mt-0 disabled:bg-red-300 disabled:text-gray-100 disabled:cursor-not-allowed'>{!isPending ? "Delete" : "Deleting..."}</button>
                                             </div>
                                         </article>
                                     </li>

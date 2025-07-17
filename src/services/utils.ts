@@ -1,6 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from 'react-toastify';
+import { userAccessKey } from "../constants/constants";
 
 // helper function to haddle success and error messages from the server
 const handleSuccMsgErrMsgRes = async (res: Response, reqFromStr: string) => {
@@ -129,7 +130,7 @@ export const forgotPassword = async (userEmail: string) => {
 
 // for getting the todo record by id
 export const getTodoRecordById = async (todoId: string) => {
-    const userSecret = Cookies.get('uscTDLT');
+    const userSecret = Cookies.get(userAccessKey);
     if (!userSecret || !todoId) {
         return { errMsg: `${!userSecret ? "User must be logged in to get the todo record." : "Todo Id parameter value is required to get todo record from database."}` };
     }
@@ -151,7 +152,7 @@ export const getTodoRecordById = async (todoId: string) => {
 
 // get todo records for specific user
 export const getTodoRecords = async (userId: number, date: string | undefined, title: string | undefined) => {
-    const userSecret = Cookies.get('uscTDLT');
+    const userSecret = Cookies.get(userAccessKey);
     if (!userSecret) {
         return { errMsg: "User must be logged in to get the todo record." };
     }

@@ -11,7 +11,7 @@ function EditTodo() {
     const [axiosSecure] = useAxiosSecure();
     const { recordId } = useParams<{ recordId: string }>();
     const recordIdNumber = recordId ? parseInt(recordId, 10) : null;
-    const { setFetchNotifications, setRenderComp, setTitleFromEdit, timeFromEdit, setTimeFromEdit } = useAuth();
+    const { setFetchNotifications, setRenderComp, setTitleFromEdit, timeFromEdit, setTimeFromEdit, recordStatus, setRecordStatus } = useAuth();
 
     useEffect(() => {
         const fetchTodoRecord = async () => {
@@ -52,7 +52,7 @@ function EditTodo() {
             const convertedTime = formatTimeTo12Hour(time);
             const title = formData.get('title') as string;
             const description = formData.get('description') as string;
-            const status = formData.get('status') as string;
+            const status = recordStatus;
 
             const payload = {
                 date,
@@ -67,7 +67,7 @@ function EditTodo() {
                 return { success: '', error: 'The date is you trying to add after edit is past date.' };
             }
 
-            const response = await axiosSecure.patch('/api/modify-todo-record', payload);
+            const response = await axiosSecure.patch('/api/modify-todo-record', payload, { withCredentials: true });
             const { succMsg, errMsg } = response.data;
 
             if (errMsg) {
@@ -78,6 +78,7 @@ function EditTodo() {
 
             if(timeFromEdit !== convertedTime) setFetchNotifications(true);
             setTimeFromEdit("");
+            setRecordStatus("");
             setTitleFromEdit(title);
             setRenderComp('render ShowDataLists comp');
             return { success: 'Form submitted successfully', error: '' };

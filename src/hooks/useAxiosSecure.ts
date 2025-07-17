@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import useAuth from "./useAuth";
 import Cookies from 'js-cookie';
+import { userAccessKey } from "../constants/constants";
 
 const axiosSecure = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
@@ -16,7 +17,7 @@ const useAxiosSecure = () => {
 
     useEffect(()=> {
         axiosSecure.interceptors.request.use(config => {
-            const token = Cookies.get('uscTDLT');
+            const token = Cookies.get(userAccessKey);
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`
             }
