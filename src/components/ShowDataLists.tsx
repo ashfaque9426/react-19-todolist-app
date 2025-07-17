@@ -27,7 +27,7 @@ type TodoRecord = {
 };
 
 // Main component to display todo records for a given date and title
-function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEditSetter, parentDataLen }: { showTableDataSetter: (show: boolean) => void, date: string, title: string, setTitle: (title: "") => void, titleFromEditSetter: (title: "") => void, parentDataLen: number }) {
+function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEditSetter, setRecordDataLen }: { showTableDataSetter: (show: boolean) => void, date: string, title: string, setTitle: (title: "") => void, titleFromEditSetter: (title: "") => void, setRecordDataLen: (len: number) => void }) {
     // State to hold fetched todo records
     const [recordDataArr, setRecordDataArr] = useState<TodoRecord[]>([]);
     // State to track if a record was deleted
@@ -66,6 +66,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
                 } else if (dataArr) {
                     if (errMsg) setErrorMsg("");
                     setRecordDataArr(dataArr);
+                    setRecordDataLen(dataArr.length);
                 }
             } catch (err) {
                 // Handle errors and set error message
@@ -74,7 +75,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
             }
         }
         fetchData();
-    }, [date, title, user, axiosSecure]);
+    }, [date, title, user, axiosSecure, setRecordDataLen]);
 
     // Handler for "Previous" button click to reset states and hide table
     const handleClick = useCallback(() => {
@@ -83,17 +84,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
         setTitle("");
         titleFromEditSetter("");
         showTableDataSetter(false);
-        
-        // Adjust component height based on window width and parent data length
-        if (winWidth < 768 && parentDataLen < 4) {
-            setCompHeight("100vh");
-        } else if ((winWidth >= 768 && parentDataLen > 4) || (winWidth > 1279 && parentDataLen > 3)) {
-            setCompHeight("auto");
-        } else {
-            const heightValue = `calc(100vh - ${navHeight + footerHeight}px)`;
-            setCompHeight(heightValue);
-        }
-    }, [setCompHeight, setTitle, showTableDataSetter, titleFromEditSetter, winWidth, parentDataLen, navHeight, footerHeight]);
+    }, [ setTitle, showTableDataSetter, titleFromEditSetter]);
 
     // Handler to mark a todo record as completed
     const handleComeplete = async (recordId: string, date: string) => {
@@ -184,7 +175,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
                                                 <p><span className='font-semibold'>Date:</span><br /> {data.Date}</p>
                                                 <p><span className='font-semibold'>Time:</span><br /> {data.Time}</p>
                                                 <p><span className='font-semibold'>Status:</span><br /> {data.Status}</p>
-                                                <p className="xl:w-2/3"><span className='font-semibold'>Description:</span><br /> {data.Description}</p>
+                                                <p className="w-2/3"><span className='font-semibold'>Description:</span><br /> {data.Description}</p>
                                             </div>
                                             <div className="flex flex-wrap items-center gap-4 xl:w-[20%]">
                                                 <button onClick={() => navigate(`/edit-todo/${data.ID}`)} disabled={isPastDate(data.Date) || isPending} className='px-2 py-1 bg-black text-white text-lg cursor-pointer rounded-lg mt-5 xl:mt-0 disabled:text-gray-500 disabled:cursor-not-allowed'>Edit</button>

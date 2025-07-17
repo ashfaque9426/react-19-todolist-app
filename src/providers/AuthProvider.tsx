@@ -22,16 +22,19 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [needToVerifyEmail, setNeedToVerifyEmail] = useState(false);
   const [fetchDates, setFetchDates] = useState(false);
   const [fetchNotifications, setFetchNotifications] = useState(false);
+  const [navHeightSet, setNavHeightSet] = useState(false);
   const [navHeight, setNavHeight] = useState(0);
   const [footerHeight, setFooterHeight] = useState(0);
   const [elemCount, setElemCount] = useState(0);
 
   useEffect(() => {
-    if (navHeight && footerHeight) {
+    // Set the component height based on nav and footer heights initially
+    if (navHeight && footerHeight && !navHeightSet) {
       const heightValue = `calc(100vh - ${navHeight + footerHeight}px)`;
       setCompHeight(heightValue);
+      setNavHeightSet(true);
     }
-  }, [navHeight, footerHeight]);
+  }, [navHeight, footerHeight, navHeightSet]);
 
   // useRef to store the timeout ids for the refresh token loop
   const timeoutIdArrRef = useRef<NodeJS.Timeout[]>([]);
