@@ -8,7 +8,7 @@ import ShowDataLists from "./ShowDataLists";
 import useWindowWidth from "../hooks/useWindowWidth";
 import useAuth from "../hooks/useAuth";
 
-function TodoLists({ userId, selectedDate, title, showDataTable, setShowDataTable, setTitle, setTitleFromEdit }: { userId: number, selectedDate: string, title: string, showDataTable: boolean, setShowDataTable: (status: boolean) => void, setTitle: (title: string) => void, setTitleFromEdit: (title: string) => void }) {
+function TodoLists({ userId, selectedDate, title, showDataTable, setShowDataTable, setTitle, setTitleFromEdit, dateFetched, setDateFetched }: { userId: number, selectedDate: string, title: string, showDataTable: boolean, setShowDataTable: (status: boolean) => void, setTitle: (title: string) => void, setTitleFromEdit: (title: string) => void, dateFetched: boolean, setDateFetched: (status: boolean) => void }) {
   const [axiosSecure] = useAxiosSecure();
   const [loading, setLoading] = useState<boolean>(true);
   const [dataArr, setDataArr] = useState([]);
@@ -57,6 +57,7 @@ function TodoLists({ userId, selectedDate, title, showDataTable, setShowDataTabl
         }
 
         setDataArr(cardDataArr);
+        setDateFetched(false);
       } catch (err) {
         const { setErrMsgStr } = errorHandler(err, true);
         setErrorMsg(setErrMsgStr);
@@ -65,7 +66,7 @@ function TodoLists({ userId, selectedDate, title, showDataTable, setShowDataTabl
     };
 
     fetchData();
-  }, [axiosSecure, selectedDate, userId]);
+  }, [axiosSecure, selectedDate, userId, dateFetched, setDateFetched]);
 
 
   return (

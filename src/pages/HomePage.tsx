@@ -9,6 +9,7 @@ function HomePage() {
     const [selectedDate, setSelectedDate] = useState("");
     const [title, setTitle] = useState("");
     const [loading, setLoading] = useState(true);
+    const [dateFetched, setDateFetched] = useState(false);
     const [showDataTable, setShowDataTable] = useState<boolean>(false);
     const { user, titleFromEdit, setTitleFromEdit, fetchDates, setFetchDates, compHeight } = useAuth();
 
@@ -43,10 +44,10 @@ function HomePage() {
                             <div className="px-4">
                                 <section className='relative my-5 w-full xl:w-2/3 2xl:w-1/2 mx-auto z-10' role='region' aria-labelledby='todo-list-section'>
                                     {/* Select date component */}
-                                    <SelectDate userId={user.userId} selectedDate={selectedDate} setSelectedDate={setSelectedDate} title={title} fetchDates={fetchDates} setFetchDates={setFetchDates} />
+                                    <SelectDate userId={user.userId} selectedDate={selectedDate} setSelectedDate={setSelectedDate} title={title} fetchDates={fetchDates} setFetchDates={setFetchDates} setDateFetched={setDateFetched} />
 
                                     {/* todolists component */}
-                                    <TodoLists userId={user.userId} selectedDate={selectedDate} title={title} setTitle={setTitle} showDataTable={showDataTable} setShowDataTable={setShowDataTable} setTitleFromEdit={setTitleFromEdit} />
+                                    <TodoLists userId={user.userId} selectedDate={selectedDate} title={title} setTitle={setTitle} showDataTable={showDataTable} setShowDataTable={setShowDataTable} setTitleFromEdit={setTitleFromEdit} dateFetched={dateFetched} setDateFetched={setDateFetched} />
                                 </section>
                             </div>
                         </> : <>

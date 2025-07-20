@@ -205,7 +205,7 @@ function Notifications() {
                 await waitUntilTimePassed(record.date, time); // wait until passed
                 if (isCancelled) return;
 
-                const notifyStr = `Your scheduled for time: ${time} has passed. ${record.date}/${time}`;
+                const notifyStr = `Your schedule for time: ${time} has passed. ${record.date}/${time}`;
 
                 // notify the user only if the notify string is not already in notifications state and update the notifications state and update localStorage for notifications and notification count
                 if (!isAlreadyStored(notifyStr)) {

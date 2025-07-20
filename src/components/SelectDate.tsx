@@ -3,14 +3,16 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 import { v4 as uuidv4 } from 'uuid';
 import { CiSquarePlus } from "react-icons/ci";
 import { useNavigate } from "react-router";
+import useAuth from "../hooks/useAuth";
 
-function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchDates, setFetchDates }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string, fetchDates: boolean, setFetchDates: (state: boolean) => void }) {
+function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchDates, setFetchDates, setDateFetched }: { userId: number, selectedDate: string, setSelectedDate: (date: string) => void, title: string, fetchDates: boolean, setFetchDates: (state: boolean) => void, setDateFetched: (status: boolean) => void }) {
     const [dates, setDates] = useState<string[]>([]);
     const [err, setErr] = useState<string | null>(null);
     const [todoDatesFetched, setTodoDatesFetched] = useState(false);
     const navigate = useNavigate();
 
     const [axiosSecure] = useAxiosSecure();
+    const { dateToSet } = useAuth();
 
     useEffect(() => {
         const fetchTodoDates = async () => {
@@ -31,9 +33,15 @@ function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchDates, 
                     setDates(dateArr);
                 }
 
-                setSelectedDate(dateArr[0]);
+                if (dateToSet) {
+                    setSelectedDate(dateToSet);
+                } else {
+                    setSelectedDate(dateArr[0]);
+                }
+
                 setTodoDatesFetched(true);
                 setFetchDates(false);
+                setDateFetched(true);
             } catch (error) {
                 console.error("Error fetching todo dates: ", error);
                 setErr("Failed to fetch todo dates.");
@@ -45,7 +53,7 @@ function SelectDate({ userId, selectedDate, setSelectedDate, title, fetchDates, 
         }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [axiosSecure, userId, todoDatesFetched, fetchDates, setSelectedDate, setFetchDates]);
+    }, [axiosSecure, userId, todoDatesFetched, fetchDates, setSelectedDate, setFetchDates, setDateFetched]);
 
     const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
         setSelectedDate(event.target.value);

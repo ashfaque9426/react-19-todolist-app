@@ -37,7 +37,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
     // State to hold error messages
     const [errorMsg, setErrorMsg] = useState("");
     // Get user and several setters from authentication context
-    const { user, setFetchNotifications, setFetchDates, setCompHeight, navHeight, footerHeight } = useAuth();
+    const { user, setFetchNotifications, setFetchDates, setCompHeight, setDateToSet, navHeight, footerHeight } = useAuth();
     // Get secure Axios instance
     const [axiosSecure] = useAxiosSecure();
     // Get navigation function
@@ -79,12 +79,15 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
 
     // Handler for "Previous" button click to reset states and hide table
     const handleClick = useCallback(() => {
+        if (recordDataArr.length > 0) {
+            setDateToSet(recordDataArr[0].Date);
+        }
         setErrorMsg("");
         setRecordDataArr([]);
         setTitle("");
         titleFromEditSetter("");
         showTableDataSetter(false);
-    }, [ setTitle, showTableDataSetter, titleFromEditSetter]);
+    }, [recordDataArr, setTitle, showTableDataSetter, titleFromEditSetter, setDateToSet]);
 
     // Handler to mark a todo record as completed
     const handleComeplete = async (recordId: string, date: string) => {
@@ -118,10 +121,13 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
         if (dataDeleted) {
             if (recordDataArr.length === 0) {
                 handleClick();
+            } else {
+                setDateToSet(recordDataArr[0].Date);
             }
             setDataDeleted(false);
+            setFetchDates(true);
         }
-    }, [recordDataArr.length, dataDeleted, handleClick]);
+    }, [recordDataArr, dataDeleted, handleClick, setDateToSet, setFetchDates]);
 
     // Handler to delete a todo record
     const handleDelete = async (recordId: string, date: string) => {
@@ -138,7 +144,6 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
                 setRecordDataArr(prev => prev.filter(record => record.ID !== recordId));
                 // Trigger notifications and date refresh
                 setFetchNotifications(true);
-                setFetchDates(true);
                 setDataDeleted(true);
             }
         } catch (err) {

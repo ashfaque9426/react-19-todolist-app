@@ -42,6 +42,8 @@ export interface AuthContextType {
   setCompHeight: (heightVal: string) => void,
   recordStatus: string,
   setRecordStatus: (status: string) => void,
+  dateToSet: string,
+  setDateToSet: (date: string) => void,
 }
 
 // interface for error handler function

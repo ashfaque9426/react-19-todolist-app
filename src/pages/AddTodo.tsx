@@ -8,7 +8,7 @@ import { errorHandler, formatTimeTo12Hour } from "../services/utils";
 function AddTodo() {
     const [arrOfTitles, setArrOfTitles] = useState<string[] | []>([]);
     // get user data from auth context
-    const { user, setFetchNotifications, setRenderComp } = useAuth();
+    const { user, setFetchNotifications, setRenderComp, setDateToSet } = useAuth();
     // get axios instance with secure headers from custom hook
     const [axiosSecure] = useAxiosSecure();
 
@@ -67,6 +67,9 @@ function AddTodo() {
 
             // which component to render set state
             setRenderComp('render ShowDataCards comp');
+
+            // set date to be used in HomePage component's child component
+            setDateToSet(date);
 
             // return success message
             return { success: succMsg, error: '' };

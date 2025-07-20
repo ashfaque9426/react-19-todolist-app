@@ -17,6 +17,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [timeFromEdit, setTimeFromEdit] = useState("");
   const [compHeight, setCompHeight] = useState("");
   const [recordStatus, setRecordStatus] = useState("");
+  const [dateToSet, setDateToSet] = useState("");
   const [userLoading, setUserLoading] = useState(true);
   const [isUserAvailable, setIsUserAvailable] = useState(false);
   const [needToVerifyEmail, setNeedToVerifyEmail] = useState(false);
@@ -304,7 +305,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, fetchNotifications, setIsUserAvailable, setFetchNotifications, login, registerUser, logout, refreshTokenHandler, scheduleTokenRefreshLoop, renderComp, setRenderComp, titleFromEdit, setTitleFromEdit, timeFromEdit, setTimeFromEdit, fetchDates, setFetchDates, navHeight, setNavHeight, footerHeight, setFooterHeight, elemCount, setElemCount, compHeight, setCompHeight, recordStatus, setRecordStatus }}>{children}</AuthContext>
+    <AuthContext value={{ user, setUser, userLoading, setUserLoading, isUserAvailable, needToVerifyEmail, fetchNotifications, setIsUserAvailable, setFetchNotifications, login, registerUser, logout, refreshTokenHandler, scheduleTokenRefreshLoop, renderComp, setRenderComp, titleFromEdit, setTitleFromEdit, timeFromEdit, setTimeFromEdit, fetchDates, setFetchDates, navHeight, setNavHeight, footerHeight, setFooterHeight, elemCount, setElemCount, compHeight, setCompHeight, recordStatus, setRecordStatus, dateToSet, setDateToSet }}>{children}</AuthContext>
   )
 }
 
