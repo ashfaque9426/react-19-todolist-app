@@ -11,17 +11,19 @@ function HomePage() {
     const [loading, setLoading] = useState(true);
     const [dateFetched, setDateFetched] = useState(false);
     const [showDataTable, setShowDataTable] = useState<boolean>(false);
-    const { user, titleFromEdit, setTitleFromEdit, fetchDates, setFetchDates, compHeight } = useAuth();
+    const { user, titleFromEdit, setTitleFromEdit, fetchDates, setFetchDates,setDateToSet, compHeight, dateFromEdit } = useAuth();
 
     useEffect(() => {
         setLoading(true);
         if (titleFromEdit) {
-            setSelectedDate(new Date().toISOString().split("T")[0]);
+            console.log("here");
+            setSelectedDate(dateFromEdit);
+            setDateToSet("");
             setTitle(titleFromEdit);
             setShowDataTable(true);
         }
         setLoading(false);
-    }, [titleFromEdit]);
+    }, [titleFromEdit, dateFromEdit, setDateToSet]);
 
     return (
         <>

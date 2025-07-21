@@ -27,7 +27,7 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
         error: '',
     });
 
-    const { renderComp, setRenderComp, setTimeFromEdit, setRecordStatus } = useAuth();
+    const { renderComp, setRenderComp, setDateFromEdit, setTimeFromEdit, setRecordStatus } = useAuth();
 
     const navigate = useNavigate();
 
@@ -54,12 +54,13 @@ const TodoForm: React.FC<Props> = ({ onSubmit, editTodo, recordData, titleArr })
             const time = convertToTimeInputValue(recordData.todo_time);
             setDate(date);
             setTime(time);
+            setDateFromEdit(date);
             setTimeFromEdit(recordData.todo_time);
             setTitle(recordData.todo_title);
             setDescription(recordData.todo_description);
             setRecordStatus(recordData.todo_status);
         }
-    }, [editTodo, recordData, setTimeFromEdit, setRecordStatus]);
+    }, [editTodo, recordData, setDateFromEdit, setTimeFromEdit, setRecordStatus]);
 
     return (
         <form action={formAction} className="max-w-md mx-auto p-6 bg-[#d1b8b8] rounded-2xl shadow-lg space-y-6">

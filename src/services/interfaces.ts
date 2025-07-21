@@ -26,6 +26,8 @@ export interface AuthContextType {
   scheduleTokenRefreshLoop: ScheduleTokenRefreshLoop,
   renderComp: string,
   setRenderComp: (state: 'render ShowDataCards comp' | 'render ShowDataLists comp' | '') => void,
+  dateFromEdit: string,
+  setDateFromEdit: (state: string) => void,
   titleFromEdit: string,
   setTitleFromEdit: (state: string) => void,
   timeFromEdit: string,

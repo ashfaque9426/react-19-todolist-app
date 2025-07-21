@@ -37,7 +37,7 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
     // State to hold error messages
     const [errorMsg, setErrorMsg] = useState("");
     // Get user and several setters from authentication context
-    const { user, setFetchNotifications, setFetchDates, setCompHeight, setDateToSet, navHeight, footerHeight } = useAuth();
+    const { user, setFetchNotifications, setFetchDates, setCompHeight, setDateToSet, setDateFromEdit, navHeight, footerHeight } = useAuth();
     // Get secure Axios instance
     const [axiosSecure] = useAxiosSecure();
     // Get navigation function
@@ -85,9 +85,10 @@ function ShowDataLists({ showTableDataSetter, date, title, setTitle, titleFromEd
         setErrorMsg("");
         setRecordDataArr([]);
         setTitle("");
+        setDateFromEdit("");
         titleFromEditSetter("");
         showTableDataSetter(false);
-    }, [recordDataArr, setTitle, showTableDataSetter, titleFromEditSetter, setDateToSet]);
+    }, [recordDataArr, setTitle, showTableDataSetter, titleFromEditSetter, setDateToSet, setDateFromEdit]);
 
     // Handler to mark a todo record as completed
     const handleComeplete = async (recordId: string, date: string) => {

@@ -11,7 +11,7 @@ function EditTodo() {
     const [axiosSecure] = useAxiosSecure();
     const { recordId } = useParams<{ recordId: string }>();
     const recordIdNumber = recordId ? parseInt(recordId, 10) : null;
-    const { setFetchNotifications, setRenderComp, setTitleFromEdit, timeFromEdit, setTimeFromEdit, recordStatus, setRecordStatus } = useAuth();
+    const { setFetchNotifications, setRenderComp, setTitleFromEdit, dateFromEdit, timeFromEdit, setTimeFromEdit, recordStatus, setRecordStatus, setFetchDates } = useAuth();
 
     useEffect(() => {
         const fetchTodoRecord = async () => {
@@ -76,7 +76,9 @@ function EditTodo() {
             
             showToast(succMsg, 'success');
 
-            if(timeFromEdit !== convertedTime) setFetchNotifications(true);
+            if (dateFromEdit !== date) setFetchDates(true);
+
+            if(dateFromEdit === date && timeFromEdit !== convertedTime) setFetchNotifications(true);
             setTimeFromEdit("");
             setRecordStatus("");
             setTitleFromEdit(title);
