@@ -16,7 +16,6 @@ function HomePage() {
     useEffect(() => {
         setLoading(true);
         if (titleFromEdit) {
-            console.log("here");
             setSelectedDate(dateFromEdit);
             setDateToSet("");
             setTitle(titleFromEdit);
